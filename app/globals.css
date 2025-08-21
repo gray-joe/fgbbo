@@ -3,11 +3,33 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --pastel-blue: #b8e0d2;
+  --pastel-blue-dark: #9BC4B3;
+  --pastel-pink: #F4C2C2;
+  --pastel-pink-dark: #E8A8A8;
+  --accent-blue: #A8D5E5;
+  --accent-pink: #F0B8D1;
+  --text-primary: #1F2937;
+  --text-secondary: #4B5563;
+  --text-muted: #6B7280;
+  --border-color: #D1D5DB;
+  --input-bg: #F9FAFB;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-pastel-blue: var(--pastel-blue);
+  --color-pastel-blue-dark: var(--pastel-blue-dark);
+  --color-pastel-pink: var(--pastel-pink);
+  --color-pastel-pink-dark: var(--pastel-pink-dark);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-pink: var(--accent-pink);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border-color: var(--border-color);
+  --color-input-bg: var(--input-bg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,6 +38,11 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --text-primary: #F9FAFB;
+    --text-secondary: #E5E7EB;
+    --text-muted: #D1D5DB;
+    --border-color: #374151;
+    --input-bg: #1F2937;
   }
 }
 
