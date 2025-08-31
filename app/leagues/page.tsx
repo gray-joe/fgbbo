@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import { useAuth } from "../../lib/hooks/useAuth";
 import { useUserLeagues } from "../../lib/hooks/useLeagues";
@@ -11,6 +11,8 @@ export default function LeaguesPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { leagues: userLeagues, loading: userLoading, refetch: refetchUser } = useUserLeagues();
   const { loading: operationsLoading, error: operationsError, createLeague } = useLeagueOperations();
+  
+
   
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showJoinForm, setShowJoinForm] = useState(false);
@@ -23,21 +25,23 @@ export default function LeaguesPage() {
     inviteCode: ""
   });
 
-  // Show loading state
-  if (authLoading || userLoading) {
+  // Show loading state for initial auth loading
+  if (authLoading) {
     return (
       <AppLayout>
         <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
           <div className="max-w-6xl mx-auto">
             <div className="text-center">
               <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-400 mx-auto"></div>
-              <p className="text-gray-700 text-lg mt-4">Loading leagues...</p>
+              <p className="text-gray-700 text-lg mt-4">Loading...</p>
             </div>
           </div>
         </div>
       </AppLayout>
     );
   }
+
+
 
   // Show login prompt if not authenticated
   if (!isAuthenticated) {
@@ -227,8 +231,16 @@ export default function LeaguesPage() {
           )}
 
           {/* User's Leagues */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Leagues</h2>
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-8 border border-white/30">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">Your Leagues</h2>
+              {userLoading && (
+                <div className="flex items-center text-sm text-gray-500">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400 mr-2"></div>
+                  Refreshing...
+                </div>
+              )}
+            </div>
             
             {userLeagues.length === 0 ? (
               <div className="text-center py-8">
