@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../supabase'
 import { UserProfile, signUp, signIn, signOut, getUserProfile, isUserAdmin } from '../auth'
@@ -12,6 +12,9 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  
+  // Use ref to track current user state in auth event handlers
+  const userRef = useRef<User | null>(null)
 
   // Function to fetch user profile
   const fetchUserProfile = async (user: User) => {
@@ -33,12 +36,15 @@ export function useAuth() {
     }
   }
 
+
+
   useEffect(() => {
     // Get initial user
     const getInitialUser = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         setUser(user)
+        userRef.current = user
         if (user) {
           await fetchUserProfile(user)
         }
@@ -52,34 +58,66 @@ export function useAuth() {
 
     getInitialUser()
 
+
+
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        // Filter out events that shouldn't trigger loading states
-        const shouldShowLoading = ['SIGNED_IN', 'SIGNED_OUT'].includes(event)
-        const shouldUpdateUser = ['SIGNED_IN', 'SIGNED_OUT', 'TOKEN_REFRESHED', 'USER_UPDATED'].includes(event)
+        // Only show loading for actual sign in/out events, but not if user is already authenticated
+        const shouldShowLoading = ['SIGNED_IN', 'SIGNED_OUT'].includes(event) && !userRef.current
         
         if (shouldShowLoading) {
           setLoading(true)
         }
         
-        if (shouldUpdateUser) {
-          if (session?.user) {
-            setUser(session.user)
-            await fetchUserProfile(session.user)
-          } else {
+        // Handle different event types
+        switch (event) {
+          case 'SIGNED_IN':
+            // Only handle SIGNED_IN if we don't already have a user
+            if (!userRef.current && session?.user) {
+              setUser(session.user)
+              userRef.current = session.user
+              await fetchUserProfile(session.user)
+            }
+            setLoading(false)
+            break
+            
+          case 'SIGNED_OUT':
             setUser(null)
             setProfile(null)
-          }
-        }
-        
-        if (shouldShowLoading) {
-          setLoading(false)
+            userRef.current = null
+            setLoading(false)
+            break
+            
+          case 'TOKEN_REFRESHED':
+          case 'USER_UPDATED':
+            // Update user data without showing loading state
+            if (session?.user) {
+              setUser(session.user)
+              userRef.current = session.user
+              // Always fetch profile for these events to keep data fresh
+              await fetchUserProfile(session.user)
+            }
+            break
+            
+          default:
+            // For any other events, just update user data without loading state
+            if (session?.user) {
+              setUser(session.user)
+              userRef.current = session.user
+            } else {
+              setUser(null)
+              setProfile(null)
+              userRef.current = null
+            }
+            break
         }
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
   const handleSignUp = async (email: string, password: string, fullName?: string) => {
