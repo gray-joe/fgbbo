@@ -8,11 +8,13 @@ import { useWeekLockStatus } from "../../lib/hooks/useWeekLocks";
 import { useAuth } from "../../lib/hooks/useAuth";
 import { Participant } from "../../lib/participants";
 import { WeeklyPrediction } from "../../lib/predictions";
+import { getAllResults } from "../../lib/results";
 
 export default function PredictionsPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { participants, loading: participantsLoading, error: participantsError } = useActiveParticipants();
   const [currentWeek, setCurrentWeek] = useState(1);
+  const [eliminationData, setEliminationData] = useState<Map<string, number>>(new Map()); // participant_id -> elimination_week
   const [predictions, setPredictions] = useState<WeeklyPrediction>({
     week: 1,
     star_baker: "",
@@ -31,6 +33,41 @@ export default function PredictionsPage() {
   );
 
   const { isLocked, loading: lockLoading } = useWeekLockStatus(currentWeek);
+
+  // Load elimination data to know which contestants are eliminated by which week
+  useEffect(() => {
+    const loadEliminationData = async () => {
+      try {
+        const allResults = await getAllResults();
+        const eliminationMap = new Map<string, number>();
+        
+        allResults.forEach(result => {
+          if (result.eliminated) {
+            eliminationMap.set(result.participant_id, result.week);
+          }
+        });
+        
+        setEliminationData(eliminationMap);
+      } catch (error) {
+        console.error('Error loading elimination data:', error);
+      }
+    };
+
+    loadEliminationData();
+  }, []);
+
+  // Filter participants based on current week - remove those eliminated before this week
+  const getAvailableParticipants = () => {
+    if (!participants) return [];
+    
+    return participants.filter(participant => {
+      const eliminationWeek = eliminationData.get(participant.id);
+      // If no elimination week recorded, participant is still active
+      if (!eliminationWeek) return true;
+      // If elimination week is >= current week, participant is still available
+      return eliminationWeek >= currentWeek;
+    });
+  };
 
   // Update current week when it changes
   useEffect(() => {
@@ -188,7 +225,7 @@ export default function PredictionsPage() {
               Weekly Predictions
             </h1>
             <p className="text-gray-700 text-lg">
-              Make your predictions for Week {currentWeek} and bake your way to victory!
+              Make your predictions for Week {currentWeek}!
             </p>
           </div>
 
@@ -196,7 +233,6 @@ export default function PredictionsPage() {
           {isLocked === true && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
               <strong>⚠️ Week {currentWeek} is Locked:</strong> This week's predictions cannot be changed. 
-              The episode has aired and results are being calculated.
             </div>
           )}
 
@@ -265,7 +301,7 @@ export default function PredictionsPage() {
                   required
                 >
                   <option value="">Select Star Baker</option>
-                  {participants.map((participant) => (
+                  {getAvailableParticipants().map((participant) => (
                     <option key={participant.id} value={participant.id}>
                       {participant.name}
                     </option>
@@ -292,7 +328,7 @@ export default function PredictionsPage() {
                   required
                 >
                   <option value="">Select Technical Winner</option>
-                  {participants.map((participant) => (
+                  {getAvailableParticipants().map((participant) => (
                     <option key={participant.id} value={participant.id}>
                       {participant.name}
                     </option>
@@ -319,7 +355,7 @@ export default function PredictionsPage() {
                   required
                 >
                   <option value="">Select Eliminated Contestant</option>
-                  {participants.map((participant) => (
+                  {getAvailableParticipants().map((participant) => (
                     <option key={participant.id} value={participant.id}>
                       {participant.name}
                     </option>
@@ -331,10 +367,10 @@ export default function PredictionsPage() {
               <div className="bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-xl p-6 border border-yellow-200">
                 <div className="flex items-center mb-4">
                   <span className="text-3xl mr-3">🤝</span>
-                  <h3 className="text-xl font-bold text-gray-800">Paul Hollywood Handshake</h3>
+                  <h3 className="text-xl font-bold text-gray-800">Hollywood Handshake</h3>
                 </div>
                 <p className="text-gray-600 mb-4">
-                  Who will receive the coveted handshake from Paul?
+                  Who will receive the coveted handshake?
                 </p>
                 <select
                   value={predictions.handshake}
@@ -345,7 +381,7 @@ export default function PredictionsPage() {
                   }`}
                 >
                   <option value="">Select Handshake Recipient (Optional)</option>
-                  {participants.map((participant) => (
+                  {getAvailableParticipants().map((participant) => (
                     <option key={participant.id} value={participant.id}>
                       {participant.name}
                     </option>
@@ -371,7 +407,7 @@ export default function PredictionsPage() {
                   }`}
                 >
                   <option value="">Select Weekly Special (Optional)</option>
-                  {participants.map((participant) => (
+                  {getAvailableParticipants().map((participant) => (
                     <option key={participant.id} value={participant.id}>
                       {participant.name}
                     </option>

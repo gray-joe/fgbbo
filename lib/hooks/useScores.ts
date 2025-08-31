@@ -10,7 +10,8 @@ import {
   getUserWeeklyBreakdown,
   UserScore,
   UserScoreWithDetails,
-  getUserLeaguePosition
+  getUserLeaguePosition,
+  getUserPrimaryLeaguePosition
 } from '../scores'
 
 export function useUserScores(userId: string | null) {
@@ -264,4 +265,52 @@ export function useUserLeaguePosition(userId: string | null) {
   }, [userId]);
 
   return { position, loading, error };
+}
+
+export function useUserPrimaryLeaguePosition(userId: string | null) {
+  const [position, setPosition] = useState<{ position: number; totalPlayers: number; leagueName: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!userId) {
+      setPosition(null);
+      setLoading(false);
+      return;
+    }
+
+    async function fetchPosition() {
+      try {
+        setLoading(true);
+        setError(null);
+        if (userId) {
+          const data = await getUserPrimaryLeaguePosition(userId);
+          setPosition(data);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch league position');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPosition();
+  }, [userId]);
+
+  const refetch = async () => {
+    if (!userId) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getUserPrimaryLeaguePosition(userId);
+      setPosition(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch league position');
+      setPosition(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { position, loading, error, refetch };
 }

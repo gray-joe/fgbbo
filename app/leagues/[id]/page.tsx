@@ -1,19 +1,19 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import AppLayout from "../../components/AppLayout";
 import { useAuth } from "../../../lib/hooks/useAuth";
-import { LeagueSummary, LeagueLeaderboardEntry } from "../../../lib/leagues";
+import { useLeagueLeaderboard } from "../../../lib/hooks/useLeagues";
 import { supabase } from "../../../lib/supabase";
 
 export default function LeagueStandingsPage() {
   const params = useParams();
   const leagueId = params.id as string;
   const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { leaderboard, loading: leaderboardLoading, error: leaderboardError, refetch } = useLeagueLeaderboard(leagueId);
   
-  const [league, setLeague] = useState<LeagueSummary | null>(null);
-  const [leaderboard, setLeaderboard] = useState<LeagueLeaderboardEntry[]>([]);
+  const [league, setLeague] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +27,7 @@ export default function LeagueStandingsPage() {
 
         // Fetch league details
         const { data: leagueData, error: leagueError } = await supabase
-          .from('league_summary')
+          .from('leagues')
           .select('*')
           .eq('id', leagueId)
           .single();
@@ -39,21 +39,6 @@ export default function LeagueStandingsPage() {
         }
 
         setLeague(leagueData);
-
-        // Fetch leaderboard
-        const { data: leaderboardData, error: leaderboardError } = await supabase
-          .from('league_leaderboard')
-          .select('*')
-          .eq('league_id', leagueId)
-          .order('position', { ascending: true });
-
-        if (leaderboardError) {
-          console.error('Error fetching leaderboard:', leaderboardError);
-          setError('Failed to load leaderboard');
-          return;
-        }
-
-        setLeaderboard(leaderboardData || []);
       } catch (err) {
         console.error('Error in fetchLeagueData:', err);
         setError('An unexpected error occurred');
@@ -66,7 +51,7 @@ export default function LeagueStandingsPage() {
   }, [leagueId]);
 
   // Show loading state
-  if (authLoading || loading) {
+  if (authLoading || loading || leaderboardLoading) {
     return (
       <AppLayout>
         <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
@@ -99,13 +84,13 @@ export default function LeagueStandingsPage() {
   }
 
   // Show error state
-  if (error) {
+  if (error || leaderboardError) {
     return (
       <AppLayout>
         <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
           <div className="max-w-6xl mx-auto">
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-              <strong>Error:</strong> {error}
+              <strong>Error:</strong> {error || leaderboardError}
             </div>
             <a 
               href="/leagues" 
@@ -166,9 +151,8 @@ export default function LeagueStandingsPage() {
             )}
             
             <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-              <div>Owner: {league.owner_display_name}</div>
-              <div>Members: {league.active_members}/{league.max_members}</div>
               <div>Created: {new Date(league.created_at || '').toLocaleDateString()}</div>
+              <div>Max Members: {league.max_members}</div>
             </div>
           </div>
 
@@ -198,7 +182,7 @@ export default function LeagueStandingsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {leaderboard.map((entry, index) => (
+                    {leaderboard.map((entry) => (
                       <tr 
                         key={entry.user_id} 
                         className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${
@@ -223,18 +207,18 @@ export default function LeagueStandingsPage() {
                             )}
                           </div>
                         </td>
-                                                 <td className="py-3 px-4">
-                           <div className="flex items-center">
-                             <span className="font-medium text-gray-800">
-                               {entry.user_display_name}
-                             </span>
-                             {entry.user_id === user?.id && (
-                               <span className="ml-2 text-xs bg-pastel-blue text-white px-2 py-1 rounded-full">
-                                 You
-                               </span>
-                             )}
-                           </div>
-                         </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center">
+                            <span className="font-medium text-gray-800">
+                              {entry.user_name}
+                            </span>
+                            {entry.user_id === user?.id && (
+                              <span className="ml-2 text-xs bg-pastel-blue text-white px-2 py-1 rounded-full">
+                                You
+                              </span>
+                            )}
+                          </div>
+                        </td>
                         <td className="py-3 px-4 text-right font-bold text-gray-800">
                           {entry.total_points}
                         </td>

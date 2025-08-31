@@ -1,17 +1,78 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useAuth } from "../lib/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { signIn, signUp, isAuthenticated, loading: authLoading } = useAuth();
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-pastel-blue mx-auto mb-4"></div>
+          <p className="text-gray-700 text-lg">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render the form if already authenticated (redirect will happen)
+  if (isAuthenticated) {
+    return null;
+  }
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication logic
-    console.log(isLogin ? "Login attempt" : "Sign up attempt", { email, password });
+    setLoading(true);
+    setError(null);
+
+    try {
+      if (isLogin) {
+        const result = await signIn(email, password);
+        if (result.success) {
+          setEmail("");
+          setPassword("");
+          setFullName("");
+          router.push("/dashboard");
+        } else {
+          setError(result.error || "Sign in failed");
+        }
+      } else {
+        const result = await signUp(email, password, fullName);
+        if (result.success) {
+          setEmail("");
+          setPassword("");
+          setFullName("");
+          router.push("/dashboard");
+        } else {
+          setError(result.error || "Sign up failed");
+        }
+      }
+    } catch (err) {
+      console.error('Authentication error:', err);
+      setError("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,7 +96,11 @@ export default function Home() {
           {/* Toggle Buttons */}
           <div className="flex bg-gray-100 rounded-lg p-1 mb-6">
             <button
-              onClick={() => setIsLogin(true)}
+              onClick={() => {
+                setIsLogin(true);
+                setError(null);
+                setFullName("");
+              }}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
                 isLogin
                   ? "bg-white text-gray-800 shadow-sm"
@@ -45,7 +110,11 @@ export default function Home() {
               Sign In
             </button>
             <button
-              onClick={() => setIsLogin(false)}
+              onClick={() => {
+                setIsLogin(false);
+                setError(null);
+                setFullName("");
+              }}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
                 !isLogin
                   ? "bg-white text-gray-800 shadow-sm"
@@ -56,8 +125,32 @@ export default function Home() {
             </button>
           </div>
 
+          {/* Error Display */}
+          {error && (
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              <strong>Error:</strong> {error}
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-semibold text-gray-800 mb-2">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent transition-all bg-white text-gray-800 placeholder-gray-500"
+                  placeholder="Enter your full name"
+                  required={!isLogin}
+                />
+              </div>
+            )}
+
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-800 mb-2">
                 Email Address
@@ -67,7 +160,7 @@ export default function Home() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent transition-all bg-white text-gray-800 placeholder-gray-500"
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent transition-all bg-white text-gray-800 placeholder-gray-500"
                 placeholder="Enter your email"
                 required
               />
@@ -102,24 +195,14 @@ export default function Home() {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-3 px-4 rounded-lg font-semibold hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-3 px-4 rounded-lg font-semibold hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLogin ? "Sign In" : "Create Account"}
+              {loading ? "Processing..." : (isLogin ? "Sign In" : "Create Account")}
             </button>
           </form>
 
-          {/* Demo Navigation */}
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="text-center">
-              <p className="text-sm text-gray-600 mb-3">Demo Navigation</p>
-              <Link 
-                href="/predictions"
-                className="inline-block bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
-              >
-                View Predictions Page →
-              </Link>
-            </div>
-          </div>
+
         </div>
 
         {/* Footer */}

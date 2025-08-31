@@ -22,7 +22,6 @@ const mainNavItems: NavItem[] = [
          { name: "Manage Participants", href: "/admin/participants", icon: "⚙️" },
          { name: "Manage Results", href: "/admin/results", icon: "📊" },
          { name: "Week Locks", href: "/admin/week-locks", icon: "🔒" },
-         { name: "Test Database", href: "/test-db", icon: "🔧" },
        ];
 
 const bottomNavItems: NavItem[] = [
@@ -31,7 +30,7 @@ const bottomNavItems: NavItem[] = [
 
 export default function SideNav() {
   const pathname = usePathname();
-  const { isAuthenticated, isAdmin, signOut } = useAuth();
+  const { isAuthenticated, isAdmin, signOut: handleSignOut } = useAuth();
 
   const isActive = (href: string) => {
     return pathname === href;
@@ -61,7 +60,7 @@ export default function SideNav() {
               href={item.href}
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 isActive(item.href)
-                  ? "bg-gradient-to-r from-pastel-blue to-pastel-pink text-white shadow-lg"
+                  ? "bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 font-semibold shadow-lg"
                   : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               }`}
             >
@@ -84,7 +83,7 @@ export default function SideNav() {
                   href={item.href}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                     isActive(item.href)
-                      ? "bg-gradient-to-r from-pastel-blue to-pastel-blue-dark text-white shadow-lg"
+                      ? "bg-gradient-to-r from-pastel-blue to-pastel-blue-dark text-gray-800 font-semibold shadow-lg"
                       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   }`}
                 >
@@ -106,7 +105,7 @@ export default function SideNav() {
               href={item.href}
               className={`flex items-center space-x-4 py-3 rounded-lg transition-all duration-200 ${
                 isActive(item.href)
-                  ? "bg-gradient-to-r from-pastel-blue to-pastel-blue-dark text-white shadow-lg"
+                  ? "bg-gradient-to-r from-pastel-blue to-pastel-blue-dark text-gray-800 font-semibold shadow-lg"
                   : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               }`}
             >
@@ -119,7 +118,7 @@ export default function SideNav() {
           <div className="mt-4 pt-4 border-t border-gray-200">
             {isAuthenticated ? (
               <button
-                onClick={signOut}
+                onClick={handleSignOut}
                 className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               >
                 <span className="text-lg">🚪</span>
@@ -127,7 +126,7 @@ export default function SideNav() {
               </button>
             ) : (
               <Link
-                href="/login"
+                href="/"
                 className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               >
                 <span className="text-lg">🔑</span>

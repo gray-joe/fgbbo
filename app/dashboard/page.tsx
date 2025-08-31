@@ -5,14 +5,12 @@ import AppLayout from "../components/AppLayout";
 import { useAuth } from "../../lib/hooks/useAuth";
 import { useUserTotalScore } from "../../lib/hooks/useScores";
 import { useUserWeeklyBreakdown } from "../../lib/hooks/useScores";
-import { useUserLeaguePosition } from "../../lib/hooks/useScores";
 import { useWeeklySummaries } from "../../lib/hooks/useResults";
 
 export default function DashboardPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { totalScore, loading: scoreLoading } = useUserTotalScore(user?.id || null);
   const { breakdown, loading: breakdownLoading } = useUserWeeklyBreakdown(user?.id || null);
-  const { position: leaguePosition, loading: positionLoading } = useUserLeaguePosition(user?.id || null);
   const { summaries, loading: summariesLoading } = useWeeklySummaries();
 
   // Calculate current week (latest week with results + 1, or 1 if no results)
@@ -20,8 +18,6 @@ export default function DashboardPage() {
     if (!summaries.length) return 1;
     return Math.max(...summaries.map(s => s.week)) + 1;
   };
-
-
 
   // Get recent results for the user
   const getRecentResults = () => {
@@ -63,7 +59,7 @@ export default function DashboardPage() {
   };
 
   // Show loading state
-  if (authLoading || scoreLoading || breakdownLoading || positionLoading || summariesLoading) {
+  if (authLoading || scoreLoading || breakdownLoading || summariesLoading) {
     return (
       <AppLayout>
         <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
@@ -112,7 +108,7 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Current Week Stats */}
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30">
               <div className="text-center">
@@ -121,20 +117,6 @@ export default function DashboardPage() {
                 <p className="text-3xl font-bold text-pastel-blue">Week {currentWeek}</p>
                 <p className="text-gray-600 text-sm">
                   {currentWeek > 1 ? "Make your predictions!" : "Season starting soon"}
-                </p>
-              </div>
-            </div>
-
-            {/* League Position */}
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30">
-              <div className="text-center">
-                <span className="text-4xl">🏆</span>
-                <h3 className="text-xl font-bold text-gray-800 mt-2">League Position</h3>
-                <p className="text-3xl font-bold text-pastel-pink">
-                  {leaguePosition ? `#${leaguePosition.position}` : 'N/A'}
-                </p>
-                <p className="text-gray-600 text-sm">
-                  {leaguePosition ? `Out of ${leaguePosition.totalPlayers} players` : 'Calculating...'}
                 </p>
               </div>
             </div>
@@ -152,7 +134,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Recent Results */}
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30 md:col-span-2 lg:col-span-3">
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30 md:col-span-2">
               <h3 className="text-xl font-bold text-gray-800 mb-4">Recent Results</h3>
               {recentResults.length === 0 ? (
                 <div className="text-center py-8">

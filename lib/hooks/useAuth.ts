@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../supabase'
 import { UserProfile, signUp, signIn, signOut, getUserProfile, isUserAdmin } from '../auth'
 import type { User } from '@supabase/supabase-js'
@@ -10,6 +11,27 @@ export function useAuth() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
+
+  // Function to fetch user profile
+  const fetchUserProfile = async (user: User) => {
+    try {
+      const userProfile = await getUserProfile(user)
+      setProfile(userProfile)
+    } catch (err) {
+      console.error('Error fetching user profile:', err)
+      // Set a basic profile from user metadata as fallback
+      setProfile({
+        id: user.id,
+        email: user.email || '',
+        full_name: user.user_metadata?.full_name || '',
+        username: user.user_metadata?.username || '',
+        display_name: user.user_metadata?.display_name || '',
+        is_admin: user.user_metadata?.is_admin || false,
+        created_at: user.created_at
+      })
+    }
+  }
 
   useEffect(() => {
     // Get initial user
@@ -18,7 +40,7 @@ export function useAuth() {
         const { data: { user } } = await supabase.auth.getUser()
         setUser(user)
         if (user) {
-          setProfile(getUserProfile(user))
+          await fetchUserProfile(user)
         }
       } catch (err) {
         setError('Failed to get user')
@@ -33,15 +55,27 @@ export function useAuth() {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setLoading(true)
-        if (session?.user) {
-          setUser(session.user)
-          setProfile(getUserProfile(session.user))
-        } else {
-          setUser(null)
-          setProfile(null)
+        // Filter out events that shouldn't trigger loading states
+        const shouldShowLoading = ['SIGNED_IN', 'SIGNED_OUT'].includes(event)
+        const shouldUpdateUser = ['SIGNED_IN', 'SIGNED_OUT', 'TOKEN_REFRESHED', 'USER_UPDATED'].includes(event)
+        
+        if (shouldShowLoading) {
+          setLoading(true)
         }
-        setLoading(false)
+        
+        if (shouldUpdateUser) {
+          if (session?.user) {
+            setUser(session.user)
+            await fetchUserProfile(session.user)
+          } else {
+            setUser(null)
+            setProfile(null)
+          }
+        }
+        
+        if (shouldShowLoading) {
+          setLoading(false)
+        }
       }
     )
 
@@ -61,7 +95,7 @@ export function useAuth() {
       
       if (newUser) {
         setUser(newUser)
-        setProfile(getUserProfile(newUser))
+        await fetchUserProfile(newUser)
         return { success: true, user: newUser }
       }
       
@@ -88,7 +122,7 @@ export function useAuth() {
       
       if (signedInUser) {
         setUser(signedInUser)
-        setProfile(getUserProfile(signedInUser))
+        await fetchUserProfile(signedInUser)
         return { success: true, user: signedInUser }
       }
       
@@ -115,6 +149,10 @@ export function useAuth() {
       
       setUser(null)
       setProfile(null)
+      
+      // Redirect to homepage after successful logout
+      router.push('/')
+      
       return { success: true }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Sign out failed'
