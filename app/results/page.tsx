@@ -157,7 +157,7 @@ export default function ResultsPage() {
                 }}
                 className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 ${
                   viewMode === 'weekly'
-                    ? 'bg-gradient-to-r from-pastel-blue to-pastel-pink text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 font-semibold shadow-lg'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -170,7 +170,7 @@ export default function ResultsPage() {
                 }}
                 className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 ${
                   viewMode === 'accumulated'
-                    ? 'bg-gradient-to-r from-pastel-blue to-pastel-pink text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 font-semibold shadow-lg'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >

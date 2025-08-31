@@ -31,6 +31,26 @@ export async function signUp(email: string, password: string, fullName?: string)
     }
   })
   
+  if (data.user && !error) {
+    // Create user profile in user_profiles table
+    try {
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .insert({
+          user_id: data.user.id,
+          display_name: fullName || email.split('@')[0] // Use email prefix as default display name
+        })
+      
+      if (profileError) {
+        console.error('Error creating user profile:', profileError)
+        // Don't fail signup if profile creation fails
+      }
+    } catch (profileErr) {
+      console.error('Error creating user profile:', profileErr)
+      // Don't fail signup if profile creation fails
+    }
+  }
+  
   return { user: data.user, error }
 }
 
@@ -56,44 +76,93 @@ export async function getCurrentUser(): Promise<User | null> {
   return user
 }
 
-// Get user profile from metadata
-export function getUserProfile(user: User | null): UserProfile | null {
+// Get user profile from user_profiles table and metadata
+export async function getUserProfile(user: User | null): Promise<UserProfile | null> {
   if (!user) return null
   
-  return {
-    id: user.id,
-    email: user.email || '',
-    full_name: user.user_metadata?.full_name || '',
-    username: user.user_metadata?.username || '',
-    display_name: user.user_metadata?.display_name || '',
-    is_admin: user.user_metadata?.is_admin || false,
-    created_at: user.created_at
+  try {
+    // Try to get profile from user_profiles table first
+    const { data: profileData, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('display_name')
+      .eq('user_id', user.id)
+      .single()
+    
+    let displayName = user.user_metadata?.display_name || ''
+    
+    if (!profileError && profileData) {
+      displayName = profileData.display_name
+    }
+    
+    return {
+      id: user.id,
+      email: user.email || '',
+      full_name: user.user_metadata?.full_name || '',
+      username: user.user_metadata?.username || '',
+      display_name: displayName,
+      is_admin: user.user_metadata?.is_admin || false,
+      created_at: user.created_at
+    }
+  } catch (error) {
+    console.error('Error fetching user profile:', error)
+    // Fallback to metadata only
+    return {
+      id: user.id,
+      email: user.email || '',
+      full_name: user.user_metadata?.full_name || '',
+      username: user.user_metadata?.username || '',
+      display_name: user.user_metadata?.display_name || '',
+      is_admin: user.user_metadata?.is_admin || false,
+      created_at: user.created_at
+    }
   }
 }
 
 // Update user profile
-export async function updateUserProfile(updates: Partial<UserProfile>): Promise<{ error: AuthError | null }> {
-  const { error } = await supabase.auth.updateUser({
-    data: updates
-  })
-  
-  return { error }
+export async function updateUserProfile(updates: Partial<UserProfile>): Promise<{ error: any }> {
+  try {
+    // Update user_profiles table if display_name is being updated
+    if (updates.display_name && updates.display_name.trim()) {
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .upsert({
+          user_id: updates.id!,
+          display_name: updates.display_name.trim()
+        }, {
+          onConflict: 'user_id'
+        })
+      
+      if (profileError) {
+        console.error('Error updating user profile:', profileError)
+        return { error: profileError }
+      }
+    }
+    
+    // Update auth metadata for other fields
+    const metadataUpdates: any = {}
+    if (updates.full_name !== undefined) metadataUpdates.full_name = updates.full_name
+    if (updates.username !== undefined) metadataUpdates.username = updates.username
+    
+    if (Object.keys(metadataUpdates).length > 0) {
+      const { error: authError } = await supabase.auth.updateUser({
+        data: metadataUpdates
+      })
+      
+      if (authError) {
+        return { error: authError }
+      }
+    }
+    
+    return { error: null }
+  } catch (error) {
+    console.error('Error updating user profile:', error)
+    return { error: error }
+  }
 }
 
 // Check if user is admin
 export function isUserAdmin(user: User | null): boolean {
   return user?.user_metadata?.is_admin || false
-}
-
-// Update admin status (only for existing admins)
-export async function updateAdminStatus(userId: string, isAdmin: boolean): Promise<{ error: AuthError | null }> {
-  // This would typically be done through a secure admin API
-  // For now, we'll update the user's metadata directly
-  const { error } = await supabase.auth.admin.updateUserById(userId, {
-    user_metadata: { is_admin: isAdmin }
-  })
-  
-  return { error }
 }
 
 // Reset password

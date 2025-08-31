@@ -143,6 +143,36 @@ export async function getUserLeaguePosition(userId: string): Promise<{ position:
   }
 }
 
+// Get user's league position within their primary league
+export async function getUserPrimaryLeaguePosition(userId: string): Promise<{ position: number; totalPlayers: number; leagueName: string } | null> {
+  try {
+    // First, get the user's leagues using the RPC function
+    const { data: userLeagues, error: leaguesError } = await supabase
+      .rpc('get_user_leagues', { user_uuid: userId });
+
+    if (leaguesError) {
+      console.error('Error fetching user leagues:', leaguesError);
+      return null;
+    }
+
+    if (!userLeagues || userLeagues.length === 0) {
+      return null; // User is not in any leagues
+    }
+
+    // Get the first league (primary league) and its position
+    const primaryLeague = userLeagues[0];
+    
+    return {
+      position: primaryLeague.user_position || 0,
+      totalPlayers: primaryLeague.active_members || 0,
+      leagueName: primaryLeague.league_name || 'Unknown League'
+    };
+  } catch (error) {
+    console.error('Error in getUserPrimaryLeaguePosition:', error);
+    return null;
+  }
+}
+
 // Calculate scores for a specific week
 export async function calculateWeekScores(week: number): Promise<void> {
   try {

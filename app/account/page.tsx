@@ -10,19 +10,16 @@ export default function AccountPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [formData, setFormData] = useState({
-    full_name: profile?.full_name || '',
-    username: profile?.username || '',
     display_name: profile?.display_name || ''
   });
 
   // Update form data when profile changes
   useEffect(() => {
     setFormData({
-      full_name: profile?.full_name || '',
-      username: profile?.username || '',
       display_name: profile?.display_name || ''
     });
   }, [profile]);
+  
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -44,7 +41,10 @@ export default function AccountPage() {
   // Update profile
   const handleUpdateProfile = async () => {
     try {
-      const { error } = await updateUserProfile(formData);
+      const { error } = await updateUserProfile({
+        id: user?.id || '',
+        display_name: formData.display_name
+      });
       if (error) {
         setError(`Failed to update profile: ${error.message}`);
       } else {
@@ -149,30 +149,6 @@ export default function AccountPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.full_name}
-                      onChange={(e) => handleProfileChange('full_name', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent transition-all bg-white text-gray-800"
-                      placeholder="Enter your full name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Username
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.username}
-                      onChange={(e) => handleProfileChange('username', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent transition-all bg-white text-gray-800"
-                      placeholder="Enter a username"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
                       Display Name *
                     </label>
                     <input
@@ -198,8 +174,6 @@ export default function AccountPage() {
                       onClick={() => {
                         setIsEditing(false);
                         setFormData({
-                          full_name: profile?.full_name || '',
-                          username: profile?.username || '',
                           display_name: profile?.display_name || ''
                         });
                       }}
@@ -211,22 +185,6 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Full Name
-                    </label>
-                    <p className="px-4 py-3 bg-gray-50 rounded-lg text-gray-800">
-                      {profile?.full_name || 'Not set'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Username
-                    </label>
-                    <p className="px-4 py-3 bg-gray-50 rounded-lg text-gray-800">
-                      {profile?.username || 'Not set'}
-                    </p>
-                  </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-2">
                       Display Name
@@ -341,52 +299,6 @@ export default function AccountPage() {
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Account Actions */}
-          <div className="mt-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Account Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800">Account Management</h3>
-                <div className="space-y-3">
-                  <button className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 text-gray-700">
-                    <span className="font-medium">Export My Data</span>
-                    <p className="text-sm text-gray-500">Download all your data and predictions</p>
-                  </button>
-                  <button className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 text-gray-700">
-                    <span className="font-medium">Privacy Settings</span>
-                    <p className="text-sm text-gray-500">Manage your privacy preferences</p>
-                  </button>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800">Danger Zone</h3>
-                <div className="space-y-3">
-                  <button className="w-full text-left px-4 py-3 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200 text-red-700 border border-red-200">
-                    <span className="font-medium">Delete Account</span>
-                    <p className="text-sm text-red-500">Permanently remove your account and data</p>
-                  </button>
-                  <button className="w-full text-left px-4 py-3 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-all duration-200 text-yellow-700 border border-yellow-200">
-                    <span className="font-medium">Reset All Data</span>
-                    <p className="text-sm text-yellow-500">Clear all your predictions and preferences</p>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-start">
-                <div className="flex-shrink-0">
-                  <span className="text-blue-600">ℹ️</span>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-blue-800">Account Information</h3>
-                  <div className="mt-2 text-sm text-blue-700">
-                    <p>Your account is managed through Supabase Auth. For security reasons, some actions like account deletion must be performed through the Supabase dashboard.</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
