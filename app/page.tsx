@@ -201,8 +201,6 @@ export default function Home() {
               {loading ? "Processing..." : (isLogin ? "Sign In" : "Create Account")}
             </button>
           </form>
-
-
         </div>
       </div>
     </div>

@@ -257,7 +257,7 @@ export default function AdminResultsPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-800">Participant</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-800">Baker</th>
                     <th className="text-center py-3 px-4 font-semibold text-gray-800">⭐ Star Baker</th>
                     <th className="text-center py-3 px-4 font-semibold text-gray-800">🏆 Technical Winner</th>
                     <th className="text-center py-3 px-4 font-semibold text-gray-800">😢 Eliminated</th>
