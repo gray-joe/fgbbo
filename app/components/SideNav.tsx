@@ -16,11 +16,11 @@ const mainNavItems: NavItem[] = [
   { name: "Predictions", href: "/predictions", icon: "🔮" },
   { name: "Leagues", href: "/leagues", icon: "🏆" },
   { name: "Results", href: "/results", icon: "📈" },
-  { name: "Participants", href: "/participants", icon: "👥" },
+          { name: "Bakers", href: "/participants", icon: "👥" },
 ];
 
        const adminNavItems: NavItem[] = [
-         { name: "Manage Participants", href: "/admin/participants", icon: "⚙️" },
+         { name: "Manage Bakers", href: "/admin/participants", icon: "⚙️" },
          { name: "Manage Results", href: "/admin/results", icon: "📊" },
          { name: "Week Locks", href: "/admin/week-locks", icon: "🔒" },
        ];

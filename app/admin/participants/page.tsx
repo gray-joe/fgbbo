@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import AppLayout from "../../components/AppLayout";
 import { getParticipants, createParticipant, updateParticipant, eliminateParticipant, Participant } from "../../../lib/participants";
 
-export default function AdminParticipantsPage() {
+export default function AdminBakersPage() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export default function AdminParticipantsPage() {
       const data = await getParticipants();
       setParticipants(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch participants');
+              setError(err instanceof Error ? err.message : 'Failed to fetch bakers');
     } finally {
       setLoading(false);
     }
@@ -83,7 +83,7 @@ export default function AdminParticipantsPage() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center">
               <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pastel-blue mx-auto"></div>
-              <p className="text-gray-700 text-lg mt-4">Loading participants...</p>
+              <p className="text-gray-700 text-lg mt-4">Loading bakers...</p>
             </div>
           </div>
         </div>
@@ -98,7 +98,7 @@ export default function AdminParticipantsPage() {
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-800 mb-2">
-              Manage Participants
+              Manage Bakers
             </h1>
             <p className="text-gray-700 text-lg">
               Add, edit, and manage Great British Bake Off contestants
@@ -141,10 +141,10 @@ export default function AdminParticipantsPage() {
 
           {/* Participants List */}
           <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Current Participants</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Current Bakers</h2>
             
             {participants.length === 0 ? (
-              <p className="text-gray-600 text-center py-8">No participants found. Add some contestants to get started!</p>
+                              <p className="text-gray-600 text-center py-8">No bakers found. Add some contestants to get started!</p>
             ) : (
               <div className="space-y-4">
                 {participants.map((participant) => (

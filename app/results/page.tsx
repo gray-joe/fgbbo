@@ -223,11 +223,11 @@ export default function ResultsPage() {
                 {currentWeekSummary ? (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-                      <span className="text-blue-700 font-medium">Total Participants</span>
+                      <span className="text-blue-700 font-medium">Total Bakers</span>
                       <span className="text-blue-600 font-bold">{totalParticipants}</span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
-                      <span className="text-green-700 font-medium">Still in Competition</span>
+                      <span className="text-green-700 font-medium">Still Baking</span>
                       <span className="text-green-600 font-bold">{remainingParticipants}</span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
@@ -370,7 +370,7 @@ export default function ResultsPage() {
               <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">Accumulated Results</h2>
                 <p className="text-gray-600">
-                  Complete competition overview showing all participants' achievements across all weeks
+                  Complete competition overview showing all bakers' achievements across all weeks
                 </p>
               </div>
 
@@ -381,7 +381,7 @@ export default function ResultsPage() {
                     <thead className="bg-gray-50">
                       <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Participant
+                          Baker
                         </th>
                         <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                           ⭐ Star Baker

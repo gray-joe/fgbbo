@@ -5,7 +5,7 @@ import { useParticipants } from "../../lib/hooks/useParticipants";
 import { useAllResults } from "../../lib/hooks/useResults";
 import { Participant } from "../../lib/participants";
 
-export default function ParticipantsPage() {
+export default function BakersPage() {
   const { participants, loading: participantsLoading, error: participantsError } = useParticipants();
   const { results: allResults, loading: resultsLoading, error: resultsError } = useAllResults();
 
@@ -41,7 +41,7 @@ export default function ParticipantsPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center">
               <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-400 mx-auto"></div>
-              <p className="text-gray-700 text-lg mt-4">Loading participants...</p>
+              <p className="text-gray-700 text-lg mt-4">Loading bakers...</p>
             </div>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function ParticipantsPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-800 mb-2">
-              Participants
+              Bakers
             </h1>
             <p className="text-gray-700 text-lg">
               Meet the bakers competing in this season!
@@ -84,10 +84,10 @@ export default function ParticipantsPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Active Participants */}
+            {/* Active Bakers */}
             {activeParticipants.length === 0 ? (
               <div className="col-span-full text-center py-8">
-                <p className="text-gray-600 text-lg">No active participants found.</p>
+                <p className="text-gray-600 text-lg">No active bakers found.</p>
               </div>
             ) : (
               activeParticipants.map((participant) => {
@@ -135,7 +135,7 @@ export default function ParticipantsPage() {
             )}
           </div>
 
-          {/* Eliminated Participants */}
+          {/* Eliminated Bakers */}
           {eliminatedParticipants.length > 0 && (
             <div className="mt-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Eliminated This Season</h2>
