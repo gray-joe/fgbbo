@@ -204,20 +204,6 @@ export default function Home() {
 
 
         </div>
-
-        {/* Footer */}
-        <div className="text-center mt-8 text-gray-600 text-sm">
-          <p>By continuing, you agree to our</p>
-          <div className="flex justify-center space-x-2 mt-1">
-            <a href="#" className="text-pastel-blue hover:text-pastel-blue-dark transition-colors font-medium">
-              Terms of Service
-            </a>
-            <span>•</span>
-            <a href="#" className="text-pastel-blue hover:text-pastel-blue-dark transition-colors font-medium">
-              Privacy Policy
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   );
