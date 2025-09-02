@@ -154,6 +154,15 @@ export default function LeagueStandingsPage() {
               <div>Created: {new Date(league.created_at || '').toLocaleDateString()}</div>
               <div>Max Members: {league.max_members}</div>
             </div>
+
+            <div className="mt-2">
+              <button
+                onClick={() => navigator.clipboard.writeText(window.location.origin + "/leagues/join/" + league.invite_code)}
+                className="w-full sm:w-auto bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-3 px-4 sm:px-6 rounded-xl font-bold text-base sm:text-lg hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed active:scale-110"
+              >
+                Copy join link
+              </button>
+            </div>
           </div>
 
           {/* Leaderboard */}
