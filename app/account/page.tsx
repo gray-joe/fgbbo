@@ -107,38 +107,38 @@ export default function AccountPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
+      <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-4 sm:p-6 md:p-8">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">
               Account Settings
             </h1>
-            <p className="text-gray-700 text-lg">
+            <p className="text-sm sm:text-base text-gray-700">
               Manage your profile and preferences
             </p>
           </div>
 
           {/* Success/Error Messages */}
           {message && (
-            <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+            <div className="mb-4 sm:mb-6 bg-green-50 border border-green-200 text-green-700 px-3 sm:px-4 py-3 rounded-lg text-sm sm:text-base">
               {message}
             </div>
           )}
           {error && (
-            <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="mb-4 sm:mb-6 bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-3 rounded-lg text-sm sm:text-base">
               {error}
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8">
             {/* Profile Information */}
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">Profile Information</h2>
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-white/30">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Profile Information</h2>
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="text-pastel-blue hover:text-pastel-blue-dark font-medium"
+                    className="bg-pastel-blue text-gray-800 hover:bg-pastel-blue-dark active:bg-pastel-blue-dark font-semibold py-2 px-4 rounded-lg transition-all duration-200 touch-manipulation"
                   >
                     Edit
                   </button>
@@ -155,7 +155,7 @@ export default function AccountPage() {
                       type="text"
                       value={formData.display_name}
                       onChange={(e) => handleProfileChange('display_name', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent transition-all bg-white text-gray-800"
+                      className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent transition-all bg-white text-gray-800 text-base"
                       placeholder="Enter your display name (shown in leagues)"
                       required
                     />
@@ -163,10 +163,10 @@ export default function AccountPage() {
                       This name will be displayed in leagues instead of your email
                     </p>
                   </div>
-                  <div className="flex space-x-3">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:space-x-3">
                     <button
                       onClick={handleUpdateProfile}
-                      className="flex-1 bg-pastel-blue text-gray-800 py-3 px-4 rounded-lg font-semibold hover:bg-pastel-blue-dark transition-all duration-200"
+                      className="w-full sm:flex-1 bg-pastel-blue text-gray-800 py-3 px-4 rounded-lg font-semibold hover:bg-pastel-blue-dark active:bg-pastel-blue-dark transition-all duration-200 touch-manipulation"
                     >
                       Save Changes
                     </button>
@@ -177,7 +177,7 @@ export default function AccountPage() {
                           display_name: profile?.display_name || ''
                         });
                       }}
-                      className="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-200"
+                      className="w-full sm:flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-400 active:bg-gray-400 transition-all duration-200 touch-manipulation"
                     >
                       Cancel
                     </button>
@@ -222,13 +222,13 @@ export default function AccountPage() {
             </div>
 
             {/* Account Settings */}
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">Account Settings</h2>
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-white/30">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Account Settings</h2>
                 {!isChangingPassword && (
                   <button
                     onClick={() => setIsChangingPassword(true)}
-                    className="text-pastel-pink hover:text-pastel-pink-dark font-medium"
+                                          className="bg-pastel-pink text-gray-800 hover:bg-pastel-pink-dark active:bg-pastel-pink-dark font-semibold py-2 px-4 rounded-lg transition-all duration-200 touch-manipulation"
                   >
                     Change Password
                   </button>
@@ -246,7 +246,7 @@ export default function AccountPage() {
                       value={passwordData.newPassword}
                       onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
                       placeholder="Enter new password"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-pink focus:border-transparent transition-all bg-white text-gray-800"
+                      className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-pink focus:border-transparent transition-all bg-white text-gray-800 text-base"
                     />
                   </div>
                   <div>
@@ -258,13 +258,13 @@ export default function AccountPage() {
                       value={passwordData.confirmPassword}
                       onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
                       placeholder="Confirm new password"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-pink focus:border-transparent transition-all bg-white text-gray-800"
+                      className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-pink focus:border-transparent transition-all bg-white text-gray-800 text-base"
                     />
                   </div>
-                  <div className="flex space-x-3">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:space-x-3">
                     <button
                       onClick={handleChangePassword}
-                      className="flex-1 bg-pastel-pink text-gray-800 py-3 px-4 rounded-lg font-semibold hover:bg-pastel-pink-dark transition-all duration-200"
+                      className="w-full sm:flex-1 bg-pastel-pink text-gray-800 py-3 px-4 rounded-lg font-semibold hover:bg-pastel-pink-dark active:bg-pastel-pink-dark transition-all duration-200 touch-manipulation"
                     >
                       Update Password
                     </button>
@@ -273,7 +273,7 @@ export default function AccountPage() {
                         setIsChangingPassword(false);
                         setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
                       }}
-                      className="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-200"
+                      className="w-full sm:flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-400 active:bg-gray-400 transition-all duration-200 touch-manipulation"
                     >
                       Cancel
                     </button>

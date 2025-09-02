@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "../../lib/hooks/useAuth";
@@ -29,6 +30,7 @@ const bottomNavItems: NavItem[] = [
 ];
 
 export default function SideNav() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { isAuthenticated, isAdmin, signOut: handleSignOut } = useAuth();
 
@@ -37,19 +39,48 @@ export default function SideNav() {
   };
 
   return (
-    <div className="fixed left-0 top-0 h-full w-64 bg-white/95 backdrop-blur-sm border-r border-white/30 shadow-xl z-50">
-      {/* Logo Section */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-pastel-pink to-pastel-blue rounded-full flex items-center justify-center">
-            <span className="text-xl">🍰</span>
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-gray-800">GBBO Fantasy</h1>
-            <p className="text-xs text-gray-600">League</p>
+    <>
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+      
+      {/* Mobile Menu Toggle Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="fixed top-4 left-4 z-50 lg:hidden bg-white/95 backdrop-blur-sm border border-white/30 rounded-lg p-2 shadow-lg"
+      >
+        <span className="text-xl">☰</span>
+      </button>
+      
+      {/* Sidebar */}
+      <div className={`fixed left-0 top-0 h-full bg-white/95 backdrop-blur-sm border-r border-white/30 shadow-xl z-50 transition-transform duration-300 ease-in-out ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      } w-64`}>
+                {/* Logo Section */}
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-pastel-pink to-pastel-blue rounded-full flex items-center justify-center">
+                <span className="text-xl">🍰</span>
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-gray-800">GBBO Fantasy</h1>
+                <p className="text-xs text-gray-600">League</p>
+              </div>
+            </div>
+            {/* Mobile Close Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="lg:hidden p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <span className="text-xl">✕</span>
+            </button>
           </div>
         </div>
-      </div>
 
       {/* Main Navigation */}
       <nav className="flex-1 p-4">
@@ -58,6 +89,7 @@ export default function SideNav() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 isActive(item.href)
                   ? "bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 font-semibold shadow-lg"
@@ -81,6 +113,7 @@ export default function SideNav() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                     isActive(item.href)
                       ? "bg-gradient-to-r from-pastel-blue to-pastel-blue-dark text-gray-800 font-semibold shadow-lg"
@@ -103,6 +136,7 @@ export default function SideNav() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={`flex items-center space-x-4 py-3 rounded-lg transition-all duration-200 ${
                 isActive(item.href)
                   ? "bg-gradient-to-r from-pastel-blue to-pastel-blue-dark text-gray-800 font-semibold shadow-lg"
@@ -137,5 +171,6 @@ export default function SideNav() {
         </div>
       </div>
     </div>
+    </>
   );
 }

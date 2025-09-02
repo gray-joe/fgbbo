@@ -123,30 +123,30 @@ export default function LeaguesPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
+      <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-4 sm:p-6 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">
               Leagues
             </h1>
-            <p className="text-gray-700 text-lg">
+            <p className="text-sm sm:text-base text-gray-700">
               Join or create leagues to compete with friends and family!
             </p>
           </div>
 
           {/* Error Display */}
           {operationsError && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-3 sm:px-4 py-3 rounded mb-4 sm:mb-6 text-sm sm:text-base">
               <strong>Error:</strong> {operationsError}
             </div>
           )}
 
           {/* Create League Button */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6 sm:mb-8">
             <button
               onClick={() => setShowCreateForm(!showCreateForm)}
               disabled={operationsLoading}
-              className="bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-3 px-6 rounded-xl font-bold text-lg hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-3 px-4 sm:px-6 rounded-xl font-bold text-base sm:text-lg hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {showCreateForm ? "Cancel" : "Create New League"}
             </button>
@@ -154,8 +154,8 @@ export default function LeaguesPage() {
 
           {/* Create League Form */}
           {showCreateForm && (
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-8 border border-white/30">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Create New League</h2>
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-white/30">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Create New League</h2>
               <form onSubmit={handleCreateLeague} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -165,7 +165,7 @@ export default function LeaguesPage() {
                     type="text"
                     value={createFormData.name}
                     onChange={(e) => setCreateFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent text-gray-800 placeholder-gray-500"
+                    className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent text-gray-800 placeholder-gray-500 text-base"
                     placeholder="Enter league name"
                     required
                   />
@@ -178,13 +178,13 @@ export default function LeaguesPage() {
                   <textarea
                     value={createFormData.description}
                     onChange={(e) => setCreateFormData(prev => ({ ...prev, description: e.target.value }))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent text-gray-800 placeholder-gray-500"
+                    className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent text-gray-800 placeholder-gray-500 text-base"
                     placeholder="Enter league description (optional)"
                     rows={3}
                   />
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Maximum Members
@@ -193,7 +193,7 @@ export default function LeaguesPage() {
                       type="number"
                       value={createFormData.maxMembers}
                       onChange={(e) => setCreateFormData(prev => ({ ...prev, maxMembers: parseInt(e.target.value) || 50 }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent text-gray-800 placeholder-gray-500"
+                      className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent text-gray-800 placeholder-gray-500 text-base"
                       min="2"
                       max="100"
                     />
@@ -210,18 +210,18 @@ export default function LeaguesPage() {
                   </div>
                 </div>
                 
-                <div className="flex justify-end space-x-3">
+                <div className="flex flex-col sm:flex-row gap-3 sm:space-x-3">
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                    className="w-full sm:w-auto px-4 py-3 text-gray-600 hover:text-gray-800 transition-colors rounded-lg border border-gray-300 hover:bg-gray-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={operationsLoading}
-                    className="bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-2 px-4 rounded-lg font-medium hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full sm:w-auto bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-3 px-4 rounded-lg font-medium hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {operationsLoading ? "Creating..." : "Create League"}
                   </button>
@@ -254,14 +254,14 @@ export default function LeaguesPage() {
                     key={`user-league-${league.league_id}`}
                     className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+                      <div className="flex-1">
                         <h3 className="text-lg font-semibold text-gray-800">{league.league_name}</h3>
                         {league.league_description && (
                           <p className="text-gray-600 text-sm mt-1">{league.league_description}</p>
                         )}
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         {league.is_owner && (
                           <span className="text-xs bg-pastel-blue text-white px-2 py-1 rounded-full">
                             Owner
@@ -273,8 +273,8 @@ export default function LeaguesPage() {
                       </div>
                     </div>
                     
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-6 text-sm text-gray-600">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm text-gray-600">
                         <div>
                           <span className="font-medium">Position:</span>
                           <span className={`ml-1 font-bold ${
@@ -294,10 +294,10 @@ export default function LeaguesPage() {
                         </div>
                       </div>
                       
-                      <div className="flex space-x-2">
+                      <div className="flex">
                         <a
                           href={`/leagues/${league.league_id}`}
-                          className="bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-2 px-4 rounded-lg font-medium hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200"
+                          className="w-full sm:w-auto text-center bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-2 px-4 rounded-lg font-medium hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200"
                         >
                           View Standings
                         </a>
@@ -310,13 +310,13 @@ export default function LeaguesPage() {
           </div>
 
           {/* Join League by Code */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-8 border border-white/30">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">Join League</h2>
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-white/30">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Join League</h2>
               <button
                 onClick={() => setShowJoinForm(!showJoinForm)}
                 disabled={operationsLoading}
-                className="bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-2 px-4 rounded-lg font-medium hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-2 px-4 rounded-lg font-medium hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {showJoinForm ? "Cancel" : "Join by Code"}
               </button>
@@ -333,7 +333,7 @@ export default function LeaguesPage() {
                       type="text"
                       value={joinFormData.inviteCode}
                       onChange={(e) => setJoinFormData(prev => ({ ...prev, inviteCode: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent text-gray-800 placeholder-gray-500"
+                      className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent text-gray-800 placeholder-gray-500 text-base"
                       placeholder="Enter league invite code (e.g., GBBO1234)"
                       required
                     />
@@ -346,7 +346,7 @@ export default function LeaguesPage() {
                     <button
                       type="submit"
                       disabled={operationsLoading}
-                      className="bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-2 px-4 rounded-lg font-medium hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full sm:w-auto bg-gradient-to-r from-pastel-blue to-pastel-pink text-gray-800 py-3 px-4 rounded-lg font-medium hover:from-pastel-blue-dark hover:to-pastel-pink-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {operationsLoading ? "Joining..." : "Join League"}
                     </button>
