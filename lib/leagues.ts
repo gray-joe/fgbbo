@@ -318,7 +318,19 @@ export async function getLeagueLeaderboard(leagueId: string): Promise<LeagueLead
       if (b.total_points !== a.total_points) {
         return b.total_points - a.total_points
       }
-      return a.user_id.localeCompare(b.user_id)
+      if (b.star_baker_points !== a.star_baker_points) {
+        return b.star_baker_points - a.star_baker_points
+      }
+      if (b.technical_winner_points !== a.technical_winner_points) {
+        return b.technical_winner_points - a.technical_winner_points
+      }
+      if (b.eliminated_points !== a.eliminated_points) {
+        return b.eliminated_points - a.eliminated_points
+      }
+      if (b.handshake_points !== a.handshake_points) {
+        return b.handshake_points - a.handshake_points
+      }
+      return a.user_name.localeCompare(b.user_name)
     })
 
     leaderboardEntries.forEach((entry, index) => {
