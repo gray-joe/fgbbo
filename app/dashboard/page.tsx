@@ -114,7 +114,7 @@ export default function DashboardPage() {
               <div className="text-center">
                 <span className="text-4xl">📅</span>
                 <h3 className="text-xl font-bold text-gray-800 mt-2">Current Week</h3>
-                <p className="text-3xl font-bold text-pastel-blue">Week {currentWeek}</p>
+                <p className="text-3xl font-bold text-pastel-blue-dark">Week {currentWeek}</p>
                 <p className="text-gray-600 text-sm">
                   {currentWeek > 1 ? "Make your predictions!" : "Season starting soon"}
                 </p>
