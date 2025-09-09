@@ -62,7 +62,7 @@ export default function DashboardPage() {
   if (authLoading || scoreLoading || breakdownLoading || summariesLoading) {
     return (
       <AppLayout>
-        <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
+        <div className="bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
           <div className="max-w-6xl mx-auto">
             <div className="text-center">
               <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-400 mx-auto"></div>
@@ -78,7 +78,7 @@ export default function DashboardPage() {
   if (!isAuthenticated) {
     return (
       <AppLayout>
-        <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
+        <div className="bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
           <div className="max-w-6xl mx-auto">
             <div className="text-center">
               <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
@@ -97,7 +97,7 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
+      <div className="bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-800 mb-2">
@@ -114,7 +114,7 @@ export default function DashboardPage() {
               <div className="text-center">
                 <span className="text-4xl">📅</span>
                 <h3 className="text-xl font-bold text-gray-800 mt-2">Current Week</h3>
-                <p className="text-3xl font-bold text-pastel-blue">Week {currentWeek}</p>
+                <p className="text-3xl font-bold text-pastel-blue-dark">Week {currentWeek}</p>
                 <p className="text-gray-600 text-sm">
                   {currentWeek > 1 ? "Make your predictions!" : "Season starting soon"}
                 </p>

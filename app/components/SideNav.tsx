@@ -16,7 +16,8 @@ const mainNavItems: NavItem[] = [
   { name: "Predictions", href: "/predictions", icon: "🔮" },
   { name: "Leagues", href: "/leagues", icon: "🏆" },
   { name: "Results", href: "/results", icon: "📈" },
-          { name: "Bakers", href: "/participants", icon: "👥" },
+  { name: "Bakers", href: "/participants", icon: "👥" },
+  { name: "Scoring", href: "/scoring", icon: "🏅" },
 ];
 
        const adminNavItems: NavItem[] = [
@@ -43,7 +44,7 @@ export default function SideNav() {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-gray-100 z-40 lg:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -137,7 +138,7 @@ export default function SideNav() {
               key={item.href}
               href={item.href}
               onClick={() => setIsMobileMenuOpen(false)}
-              className={`flex items-center space-x-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 isActive(item.href)
                   ? "bg-gradient-to-r from-pastel-blue to-pastel-blue-dark text-gray-800 font-semibold shadow-lg"
                   : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"

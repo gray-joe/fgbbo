@@ -6,14 +6,16 @@ import { useActiveParticipants } from "../../lib/hooks/useParticipants";
 import { useWeeklyPredictions } from "../../lib/hooks/usePredictions";
 import { useWeekLockStatus } from "../../lib/hooks/useWeekLocks";
 import { useAuth } from "../../lib/hooks/useAuth";
+import { useWeeklySummaries } from "../../lib/hooks/useResults";
 import { WeeklyPrediction } from "../../lib/predictions";
 import { getAllResults } from "../../lib/results";
 
 export default function PredictionsPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { participants, loading: participantsLoading, error: participantsError } = useActiveParticipants();
+  const { summaries, loading: summariesLoading } = useWeeklySummaries();
   const [currentWeek, setCurrentWeek] = useState(1);
-  const [eliminationData, setEliminationData] = useState<Map<string, number>>(new Map()); // participant_id -> elimination_week
+  const [eliminationData, setEliminationData] = useState<Map<string, number>>(new Map());
   const [predictions, setPredictions] = useState<WeeklyPrediction>({
     week: 1,
     star_baker: "",
@@ -43,7 +45,18 @@ export default function PredictionsPage() {
   }
   const { isLocked, loading: lockLoading } = useWeekLockStatus(currentWeek);
 
-  // Load elimination data to know which contestants are eliminated by which week
+  const getCurrentWeek = () => {
+    if (!summaries.length) return 1;
+    return Math.max(...summaries.map(s => s.week)) + 1;
+  };
+
+  useEffect(() => {
+    if (!summariesLoading && summaries.length > 0) {
+      const calculatedCurrentWeek = getCurrentWeek();
+      setCurrentWeek(calculatedCurrentWeek);
+    }
+  }, [summaries, summariesLoading]);
+
   useEffect(() => {
     const loadEliminationData = async () => {
       try {
@@ -65,20 +78,16 @@ export default function PredictionsPage() {
     loadEliminationData();
   }, []);
 
-  // Filter participants based on current week - remove those eliminated before this week
   const getAvailableParticipants = () => {
     if (!participants) return [];
     
     return participants.filter(participant => {
       const eliminationWeek = eliminationData.get(participant.id);
-      // If no elimination week recorded, participant is still active
       if (!eliminationWeek) return true;
-      // If elimination week is >= current week, participant is still available
       return eliminationWeek >= currentWeek;
     });
   };
 
-  // Update current week when it changes
   useEffect(() => {
     setPredictions(prev => ({
       ...prev,
@@ -86,7 +95,6 @@ export default function PredictionsPage() {
     }));
   }, [currentWeek]);
 
-  // Load existing predictions when they change
   useEffect(() => {
     if (existingPredictions.length > 0) {
       const newPredictions: WeeklyPrediction = {
@@ -120,7 +128,6 @@ export default function PredictionsPage() {
 
       setPredictions(newPredictions);
     } else {
-      // Reset predictions if none exist for this week
       setPredictions({
         week: currentWeek,
         star_baker: "",
@@ -133,7 +140,6 @@ export default function PredictionsPage() {
   }, [existingPredictions, currentWeek]);
 
   const handlePredictionChange = (category: keyof WeeklyPrediction, value: string) => {
-    // Don't allow changes if the week is locked
     if (isLocked === true) {
       return;
     }
@@ -165,7 +171,6 @@ export default function PredictionsPage() {
       await savePredictions(predictions);
       setSaveSuccess(true);
       
-      // Clear success message after 3 seconds
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
       setSaveError(error instanceof Error ? error.message : 'Failed to save predictions');
@@ -174,8 +179,7 @@ export default function PredictionsPage() {
     }
   };
 
-  // Show loading state
-  if (authLoading || participantsLoading || predictionsLoading || lockLoading) {
+  if (authLoading || participantsLoading || predictionsLoading || lockLoading || summariesLoading) {
     return (
       <AppLayout>
         <div className="min-h-screen p-8">
@@ -190,7 +194,6 @@ export default function PredictionsPage() {
     );
   }
 
-  // Show error state
   if (participantsError) {
     return (
       <AppLayout>
@@ -207,7 +210,6 @@ export default function PredictionsPage() {
     );
   }
 
-  // Show login required message
   if (!isAuthenticated) {
     return (
       <AppLayout>

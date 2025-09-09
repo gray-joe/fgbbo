@@ -12,6 +12,8 @@ export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [acceptPrivacy, setAcceptPrivacy] = useState(false);
   const { signIn, signUp, isAuthenticated, loading: authLoading } = useAuth();
   const router = useRouter();
 
@@ -45,6 +47,13 @@ export default function Home() {
     setLoading(true);
     setError(null);
 
+    // Check legal acceptance for signup
+    if (!isLogin && (!acceptTerms || !acceptPrivacy)) {
+      setError("Please accept the Terms & Conditions and Privacy Policy to continue");
+      setLoading(false);
+      return;
+    }
+
     try {
       if (isLogin) {
         const result = await signIn(email, password);
@@ -52,6 +61,8 @@ export default function Home() {
           setEmail("");
           setPassword("");
           setFullName("");
+          setAcceptTerms(false);
+          setAcceptPrivacy(false);
           router.push("/dashboard");
         } else {
           setError(result.error || "Sign in failed");
@@ -62,6 +73,8 @@ export default function Home() {
           setEmail("");
           setPassword("");
           setFullName("");
+          setAcceptTerms(false);
+          setAcceptPrivacy(false);
           router.push("/dashboard");
         } else {
           setError(result.error || "Sign up failed");
@@ -100,6 +113,8 @@ export default function Home() {
                 setIsLogin(true);
                 setError(null);
                 setFullName("");
+                setAcceptTerms(false);
+                setAcceptPrivacy(false);
               }}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
                 isLogin
@@ -114,6 +129,8 @@ export default function Home() {
                 setIsLogin(false);
                 setError(null);
                 setFullName("");
+                setAcceptTerms(false);
+                setAcceptPrivacy(false);
               }}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
                 !isLogin
@@ -190,6 +207,43 @@ export default function Home() {
                 <a href="#" className="text-sm text-pastel-blue hover:text-pastel-blue-dark transition-colors font-medium">
                   Forgot password?
                 </a>
+              </div>
+            )}
+
+            {!isLogin && (
+              <div className="space-y-3">
+                <div className="flex items-start">
+                  <input
+                    type="checkbox"
+                    id="acceptTerms"
+                    checked={acceptTerms}
+                    onChange={(e) => setAcceptTerms(e.target.checked)}
+                    className="mt-1 rounded border-gray-300 text-pastel-blue focus:ring-pastel-blue"
+                    required
+                  />
+                  <label htmlFor="acceptTerms" className="ml-2 text-sm text-gray-700">
+                    I agree to the{" "}
+                    <Link href="/terms" className="text-pastel-blue hover:text-pastel-blue-dark transition-colors font-medium">
+                      Terms & Conditions
+                    </Link>
+                  </label>
+                </div>
+                <div className="flex items-start">
+                  <input
+                    type="checkbox"
+                    id="acceptPrivacy"
+                    checked={acceptPrivacy}
+                    onChange={(e) => setAcceptPrivacy(e.target.checked)}
+                    className="mt-1 rounded border-gray-300 text-pastel-blue focus:ring-pastel-blue"
+                    required
+                  />
+                  <label htmlFor="acceptPrivacy" className="ml-2 text-sm text-gray-700">
+                    I agree to the{" "}
+                    <Link href="/privacy" className="text-pastel-blue hover:text-pastel-blue-dark transition-colors font-medium">
+                      Privacy Policy
+                    </Link>
+                  </label>
+                </div>
               </div>
             )}
 
