@@ -137,7 +137,7 @@ export default function SideNav() {
               key={item.href}
               href={item.href}
               onClick={() => setIsMobileMenuOpen(false)}
-              className={`flex items-center space-x-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 isActive(item.href)
                   ? "bg-gradient-to-r from-pastel-blue to-pastel-blue-dark text-gray-800 font-semibold shadow-lg"
                   : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
