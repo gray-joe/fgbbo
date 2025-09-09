@@ -41,6 +41,41 @@ export default function PredictionsPage() {
     2: {
       name: "Biscuit",
       weeklySpecial: "Who will be the first baker to get a 'Good Snap'?"
+    },
+    3: {
+      name: "TBD",
+      weeklySpecial: "TBD"
+    },
+    4: {
+      name: "TBD",
+      weeklySpecial: "TBD"
+    },
+    5: {
+      name: "TBD",
+      weeklySpecial: "TBD"
+    },
+    6: {
+      name: "TBD",
+      weeklySpecial: "TBD"
+    },
+    7: {
+      name: "TBD",
+      weeklySpecial: "TBD"
+    },
+    8: {
+      name: "TBD",
+      weeklySpecial: "TBD"
+    },
+    9: {
+      name: "TBD",
+      weeklySpecial: "TBD"
+    }
+  }
+
+  const getWeekTheme = (week: number) => {
+    return weekThemes[week] || {
+      name: `Week ${week}`,
+      weeklySpecial: "Make your prediction for this week's special challenge!"
     }
   }
   const { isLocked, loading: lockLoading } = useWeekLockStatus(currentWeek);
@@ -269,7 +304,7 @@ export default function PredictionsPage() {
           {/* Week Selector */}
           <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-8 border border-white/30">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Week {currentWeek} - {weekThemes[currentWeek].name}</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Week {currentWeek} - {getWeekTheme(currentWeek).name}</h2>
               <div className="flex space-x-2">
                 <button
                   onClick={() => setCurrentWeek(Math.max(1, currentWeek - 1))}
@@ -407,7 +442,7 @@ export default function PredictionsPage() {
                   <h3 className="text-xl font-bold text-gray-800">Weekly Special</h3>
                 </div>
                 <p className="text-gray-600 mb-4">
-                  {weekThemes[currentWeek].weeklySpecial}
+                  {getWeekTheme(currentWeek).weeklySpecial}
                 </p>
                 <select
                   value={predictions.weekly_special}
