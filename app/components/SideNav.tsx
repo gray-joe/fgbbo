@@ -16,7 +16,7 @@ const mainNavItems: NavItem[] = [
   { name: "Predictions", href: "/predictions", icon: "🔮" },
   { name: "Leagues", href: "/leagues", icon: "🏆" },
   { name: "Results", href: "/results", icon: "📈" },
-          { name: "Bakers", href: "/participants", icon: "👥" },
+  { name: "Bakers", href: "/participants", icon: "👥" },
 ];
 
        const adminNavItems: NavItem[] = [

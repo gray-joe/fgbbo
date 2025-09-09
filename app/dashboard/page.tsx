@@ -62,7 +62,7 @@ export default function DashboardPage() {
   if (authLoading || scoreLoading || breakdownLoading || summariesLoading) {
     return (
       <AppLayout>
-        <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
+        <div className="bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
           <div className="max-w-6xl mx-auto">
             <div className="text-center">
               <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-400 mx-auto"></div>
@@ -78,7 +78,7 @@ export default function DashboardPage() {
   if (!isAuthenticated) {
     return (
       <AppLayout>
-        <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
+        <div className="bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
           <div className="max-w-6xl mx-auto">
             <div className="text-center">
               <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
@@ -97,7 +97,7 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
+      <div className="bg-gradient-to-br from-pastel-blue via-white to-pastel-pink p-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-800 mb-2">
