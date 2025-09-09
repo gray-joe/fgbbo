@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
+import ErrorScreen from "../components/ErrorScreen";
 import { useActiveParticipants } from "../../lib/hooks/useParticipants";
 import { useWeeklyPredictions } from "../../lib/hooks/usePredictions";
 import { useWeekLockStatus } from "../../lib/hooks/useWeekLocks";
@@ -9,6 +10,7 @@ import { useAuth } from "../../lib/hooks/useAuth";
 import { useWeeklySummaries } from "../../lib/hooks/useResults";
 import { WeeklyPrediction } from "../../lib/predictions";
 import { getAllResults } from "../../lib/results";
+import { getErrorConfig, determineErrorType } from "../../lib/errorUtils";
 
 export default function PredictionsPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
@@ -27,6 +29,7 @@ export default function PredictionsPage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [pageError, setPageError] = useState<Error | null>(null);
 
   const { predictions: existingPredictions, loading: predictionsLoading, savePredictions } = useWeeklyPredictions(
     user?.id || null, 
@@ -73,9 +76,17 @@ export default function PredictionsPage() {
   }
 
   const getWeekTheme = (week: number) => {
-    return weekThemes[week] || {
-      name: `Week ${week}`,
-      weeklySpecial: "Make your prediction for this week's special challenge!"
+    try {
+      return weekThemes[week] || {
+        name: `Week ${week}`,
+        weeklySpecial: "Make your prediction for this week's special challenge!"
+      }
+    } catch (error) {
+      console.error('Error getting week theme:', error);
+      return {
+        name: `Week ${week}`,
+        weeklySpecial: "Make your prediction for this week's special challenge!"
+      }
     }
   }
   const { isLocked, loading: lockLoading } = useWeekLockStatus(currentWeek);
@@ -114,13 +125,19 @@ export default function PredictionsPage() {
   }, []);
 
   const getAvailableParticipants = () => {
-    if (!participants) return [];
-    
-    return participants.filter(participant => {
-      const eliminationWeek = eliminationData.get(participant.id);
-      if (!eliminationWeek) return true;
-      return eliminationWeek >= currentWeek;
-    });
+    try {
+      if (!participants) return [];
+      
+      return participants.filter(participant => {
+        const eliminationWeek = eliminationData.get(participant.id);
+        if (!eliminationWeek) return true;
+        return eliminationWeek >= currentWeek;
+      });
+    } catch (error) {
+      console.error('Error getting available participants:', error);
+      setPageError(error instanceof Error ? error : new Error('Failed to load participants'));
+      return [];
+    }
   };
 
   useEffect(() => {
@@ -213,6 +230,30 @@ export default function PredictionsPage() {
       setSaving(false);
     }
   };
+
+  if (pageError) {
+    const errorType = determineErrorType(pageError, 'predictions');
+    const errorConfig = getErrorConfig(errorType);
+    
+    return (
+      <AppLayout>
+        <ErrorScreen
+          error={pageError}
+          title={errorConfig.title}
+          message={errorConfig.message}
+          showDetails={process.env.NODE_ENV === 'development'}
+          onRetry={() => {
+            setPageError(null);
+            window.location.reload();
+          }}
+          onGoHome={() => {
+            setPageError(null);
+            window.location.href = '/';
+          }}
+        />
+      </AppLayout>
+    );
+  }
 
   if (authLoading || participantsLoading || predictionsLoading || lockLoading || summariesLoading) {
     return (
