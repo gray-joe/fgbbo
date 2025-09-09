@@ -11,6 +11,7 @@ export interface UserScore {
   handshake_points: number
   weekly_special_points: number
   bonus_points: number
+  penalty_points: number
   created_at?: string
   updated_at?: string
 }
@@ -265,6 +266,7 @@ export async function getUserWeeklyBreakdown(userId: string): Promise<{
     handshake: number
     weekly_special: number
     bonus: number
+    penalty: number
   }
 }[]> {
   try {
@@ -279,7 +281,8 @@ export async function getUserWeeklyBreakdown(userId: string): Promise<{
         eliminated: score.eliminated_points,
         handshake: score.handshake_points,
         weekly_special: score.weekly_special_points,
-        bonus: score.bonus_points
+        bonus: score.bonus_points,
+        penalty: score.penalty_points
       }
     }))
   } catch (error) {

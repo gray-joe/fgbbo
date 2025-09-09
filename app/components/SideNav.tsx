@@ -17,6 +17,7 @@ const mainNavItems: NavItem[] = [
   { name: "Leagues", href: "/leagues", icon: "🏆" },
   { name: "Results", href: "/results", icon: "📈" },
   { name: "Bakers", href: "/participants", icon: "👥" },
+  { name: "Scoring", href: "/scoring", icon: "🏅" },
 ];
 
        const adminNavItems: NavItem[] = [

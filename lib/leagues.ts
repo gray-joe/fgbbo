@@ -43,6 +43,7 @@ export interface LeagueLeaderboardEntry {
   handshake_points: number;
   weekly_special_points: number;
   bonus_points: number;
+  penalty_points: number;
   week: number;
   user_name: string;
   joined_at: string;
@@ -266,6 +267,7 @@ export async function getLeagueLeaderboard(leagueId: string): Promise<LeagueLead
         handshake_points: 0,
         weekly_special_points: 0,
         bonus_points: 0,
+        penalty_points: 0,
         week: 0
       }
       
@@ -276,6 +278,7 @@ export async function getLeagueLeaderboard(leagueId: string): Promise<LeagueLead
       existing.handshake_points += score.handshake_points || 0
       existing.weekly_special_points += score.weekly_special_points || 0
       existing.bonus_points += score.bonus_points || 0
+      existing.penalty_points += score.penalty_points || 0
       existing.week = Math.max(existing.week, score.week || 0)
       
       scoresMap.set(score.user_id, existing)
@@ -290,6 +293,7 @@ export async function getLeagueLeaderboard(leagueId: string): Promise<LeagueLead
         handshake_points: 0,
         weekly_special_points: 0,
         bonus_points: 0,
+        penalty_points: 0,
         week: 0
       }
 
@@ -307,6 +311,7 @@ export async function getLeagueLeaderboard(leagueId: string): Promise<LeagueLead
         handshake_points: scores.handshake_points,
         weekly_special_points: scores.weekly_special_points,
         bonus_points: scores.bonus_points,
+        penalty_points: scores.penalty_points,
         week: scores.week,
         user_name: displayName,
         joined_at: member.joined_at,

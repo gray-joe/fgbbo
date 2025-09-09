@@ -38,6 +38,11 @@ export default function Footer() {
                   Results
                 </Link>
               </li>
+              <li>
+                <Link href="/scoring" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                  Scoring
+                </Link>
+              </li>
             </ul>
           </div>
 
