@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import AppLayout from "../../components/AppLayout";
+import AdminProtection from "../../components/AdminProtection";
 import { getParticipants, createParticipant, updateParticipant, eliminateParticipant, Participant } from "../../../lib/participants";
 
-export default function AdminBakersPage() {
+function AdminBakersPageContent() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -219,5 +220,13 @@ export default function AdminBakersPage() {
         </div>
       </div>
     </AppLayout>
+  );
+}
+
+export default function AdminBakersPage() {
+  return (
+    <AdminProtection>
+      <AdminBakersPageContent />
+    </AdminProtection>
   );
 }

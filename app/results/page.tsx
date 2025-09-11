@@ -6,7 +6,6 @@ import { useWeeklyResults } from "../../lib/hooks/useResults";
 import { useWeeklySummaries } from "../../lib/hooks/useResults";
 import { useAllResults } from "../../lib/hooks/useResults";
 import { useWeekScores } from "../../lib/hooks/useScores";
-import { useAuth } from "../../lib/hooks/useAuth";
 
 export default function ResultsPage() {
   const [currentWeek, setCurrentWeek] = useState(1);
@@ -52,18 +51,13 @@ export default function ResultsPage() {
     );
   }
 
-  // Get the current week summary
   const currentWeekSummary = summaries.find(s => s.week === currentWeek);
   const maxWeek = summaries.length > 0 ? Math.max(...summaries.map(s => s.week)) : 1;
-
-  // Calculate total participants for the week
   const totalParticipants = currentWeekSummary?.total_participants || 0;
   
-  // Calculate remaining participants by counting all participants eliminated up to current week
   const getRemainingParticipants = () => {
     if (!allResults.length) return totalParticipants;
     
-    // Count participants eliminated up to and including the current week
     const eliminatedUpToCurrentWeek = new Set();
     allResults.forEach(result => {
       if (result.eliminated && result.week <= currentWeek) {
@@ -76,13 +70,10 @@ export default function ResultsPage() {
   
   const remainingParticipants = getRemainingParticipants();
 
-  // Process accumulated results
   const getAccumulatedResults = () => {
     if (!allResults.length) return [];
     
     const participantMap = new Map();
-    
-    // Group results by participant
     allResults.forEach(result => {
       if (!participantMap.has(result.participant_id)) {
         participantMap.set(result.participant_id, {
@@ -110,7 +101,6 @@ export default function ResultsPage() {
       }
     });
     
-    // Convert to array and sort by elimination week (eliminated first, then by week), then by total achievements
     return Array.from(participantMap.values())
       .sort((a, b) => {
         if (a.is_eliminated && !b.is_eliminated) return -1;
@@ -118,7 +108,6 @@ export default function ResultsPage() {
         if (a.is_eliminated && b.is_eliminated) {
           return (a.eliminated_week || 0) - (b.eliminated_week || 0);
         }
-        // For active participants, sort by total achievements
         const aScore = a.total_star_baker * 3 + a.total_technical_winner * 2 + a.total_handshake + a.total_weekly_special;
         const bScore = b.total_star_baker * 3 + b.total_technical_winner * 2 + b.total_handshake + b.total_weekly_special;
         return bScore - aScore;
@@ -179,7 +168,6 @@ export default function ResultsPage() {
           </div>
 
           {viewMode === 'weekly' ? (
-            // Weekly Results View
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Week Selector */}
               <div className="lg:col-span-3 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AppLayout from "../../components/AppLayout";
+import AdminProtection from "../../components/AdminProtection";
 import { useParticipants } from "../../../lib/hooks/useParticipants";
 import { useWeeklyResults } from "../../../lib/hooks/useResults";
 import { useAllResults } from "../../../lib/hooks/useResults";
@@ -9,7 +10,7 @@ import { upsertWeeklyResult, deleteWeeklyResults } from "../../../lib/results";
 import { Participant } from "../../../lib/participants";
 import { calculateWeekScores } from "../../../lib/scores";
 
-export default function AdminResultsPage() {
+function AdminResultsPageContent() {
   const { participants, loading: participantsLoading, error: participantsError } = useParticipants();
   const [currentWeek, setCurrentWeek] = useState(1);
   const { results: weeklyResults, loading: resultsLoading, error: resultsError, refetch } = useWeeklyResults(currentWeek);
@@ -402,5 +403,13 @@ export default function AdminResultsPage() {
         </div>
       </div>
     </AppLayout>
+  );
+}
+
+export default function AdminResultsPage() {
+  return (
+    <AdminProtection>
+      <AdminResultsPageContent />
+    </AdminProtection>
   );
 }

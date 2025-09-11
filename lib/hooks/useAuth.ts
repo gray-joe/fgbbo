@@ -202,7 +202,7 @@ export function useAuth() {
   }
 
   const isAuthenticated = !!user
-  const isAdmin = isUserAdmin(user)
+  const isAdmin = profile?.is_admin || false
 
   return {
     user,
