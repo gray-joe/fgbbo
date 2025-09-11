@@ -17,7 +17,7 @@ export interface UserScore {
 }
 
 export interface UserScoreWithDetails extends UserScore {
-  user_name: string
+  user_display_name: string
 }
 
 export interface ScoringConfig {

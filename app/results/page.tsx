@@ -14,7 +14,6 @@ export default function ResultsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
   
-  const { user, isAuthenticated, isAdmin } = useAuth();
   const { results: weeklyResults, loading, error } = useWeeklyResults(currentWeek);
   const { summaries, loading: summariesLoading } = useWeeklySummaries();
   const { results: allResults, loading: allResultsLoading } = useAllResults();
@@ -296,9 +295,6 @@ export default function ResultsPage() {
                                  {weekScores.length === 0 ? (
                    <div className="text-center py-8">
                      <p className="text-gray-600">No scores calculated for Week {currentWeek} yet.</p>
-                     {isAdmin && (
-                       <p className="text-gray-500 text-sm mt-2">Scores are automatically calculated when you save results in the admin panel.</p>
-                     )}
                    </div>
                  ) : (
                   <div className="space-y-3">
@@ -323,7 +319,7 @@ export default function ResultsPage() {
                               index === 2 ? 'text-orange-700' :
                               'text-blue-700'
                             }`}>
-                              {score.user_name}
+                              {score.user_display_name}
                             </span>
                           </div>
                           <span className={`font-bold text-lg ${
