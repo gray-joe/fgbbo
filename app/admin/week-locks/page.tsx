@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import AppLayout from "../../components/AppLayout";
+import AdminProtection from "../../components/AdminProtection";
 import { useWeekLocks } from "../../../lib/hooks/useWeekLocks";
 import { useAuth } from "../../../lib/hooks/useAuth";
 
-export default function AdminWeekLocksPage() {
-  const { user, isAuthenticated, isAdmin, loading: authLoading } = useAuth();
+function AdminWeekLocksPageContent() {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const { weekLocks, loading, error, lockWeek, unlockWeek } = useWeekLocks();
   const [actionLoading, setActionLoading] = useState<number | null>(null);
 
-  // Show loading state
   if (authLoading || loading) {
     return (
       <AppLayout>
@@ -26,8 +26,7 @@ export default function AdminWeekLocksPage() {
     );
   }
 
-  // Show access denied for non-admins
-  if (!isAuthenticated || !isAdmin) {
+  if (!isAuthenticated) {
     return (
       <AppLayout>
         <div className="min-h-screen p-8">
@@ -43,7 +42,6 @@ export default function AdminWeekLocksPage() {
     );
   }
 
-  // Show error state
   if (error) {
     return (
       <AppLayout>
@@ -82,7 +80,6 @@ export default function AdminWeekLocksPage() {
     }
   };
 
-  // Generate weeks 1-12 for display
   const allWeeks = Array.from({ length: 12 }, (_, i) => i + 1);
   const lockedWeeks = weekLocks.map(lock => lock.week);
 
@@ -207,5 +204,13 @@ export default function AdminWeekLocksPage() {
         </div>
       </div>
     </AppLayout>
+  );
+}
+
+export default function AdminWeekLocksPage() {
+  return (
+    <AdminProtection>
+      <AdminWeekLocksPageContent />
+    </AdminProtection>
   );
 }

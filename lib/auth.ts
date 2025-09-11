@@ -84,14 +84,16 @@ export async function getUserProfile(user: User | null): Promise<UserProfile | n
     // Try to get profile from user_profiles table first
     const { data: profileData, error: profileError } = await supabase
       .from('user_profiles')
-      .select('display_name')
+      .select('display_name, is_admin')
       .eq('user_id', user.id)
       .single()
     
     let displayName = user.user_metadata?.display_name || ''
+    let isAdmin = user.user_metadata?.is_admin || false
     
     if (!profileError && profileData) {
       displayName = profileData.display_name
+      isAdmin = profileData.is_admin || false
     }
     
     return {
@@ -100,7 +102,7 @@ export async function getUserProfile(user: User | null): Promise<UserProfile | n
       full_name: user.user_metadata?.full_name || '',
       username: user.user_metadata?.username || '',
       display_name: displayName,
-      is_admin: user.user_metadata?.is_admin || false,
+      is_admin: isAdmin,
       created_at: user.created_at
     }
   } catch (error) {
@@ -160,9 +162,29 @@ export async function updateUserProfile(updates: Partial<UserProfile>): Promise<
   }
 }
 
-// Check if user is admin
-export function isUserAdmin(user: User | null): boolean {
-  return user?.user_metadata?.is_admin || false
+// Check if user is admin (database-based check)
+export async function isUserAdmin(user: User | null): Promise<boolean> {
+  if (!user) return false
+  
+  try {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('is_admin')
+      .eq('user_id', user.id)
+      .single()
+    
+    if (error) {
+      console.error('Error checking admin status:', error)
+      // Fallback to user_metadata for backward compatibility during transition
+      return user?.user_metadata?.is_admin || false
+    }
+    
+    return data?.is_admin || false
+  } catch (error) {
+    console.error('Error in isUserAdmin:', error)
+    // Fallback to user_metadata for backward compatibility during transition
+    return user?.user_metadata?.is_admin || false
+  }
 }
 
 // Reset password
