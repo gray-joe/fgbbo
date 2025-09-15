@@ -46,8 +46,8 @@ export default function PredictionsPage() {
       weeklySpecial: "Who will be the first baker to get a 'Good Snap'?"
     },
     3: {
-      name: "TBD",
-      weeklySpecial: "TBD"
+      name: "Bread",
+      weeklySpecial: "Which Baker will overwork their dough?"
     },
     4: {
       name: "TBD",
