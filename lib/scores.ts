@@ -10,6 +10,10 @@ export interface UserScore {
   eliminated_points: number
   handshake_points: number
   weekly_special_points: number
+  winner_points: number
+  finalist1_points: number
+  finalist2_points: number
+  finalist3_points: number
   bonus_points: number
   penalty_points: number
   created_at?: string
@@ -52,13 +56,18 @@ export async function getUserScores(userId: string): Promise<UserScore[]> {
 export async function getWeekScores(week: number): Promise<UserScoreWithDetails[]> {
   try {
     const { data, error } = await supabase
-      .from('user_scores_with_details')
+      .from('user_scores_with_details_v2')
       .select('*')
       .eq('week', week)
       .order('total_points', { ascending: false })
 
     if (error) {
-      console.error('Error fetching week scores:', error)
+      console.error('Error fetching week scores:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      })
       throw error
     }
 
@@ -73,12 +82,17 @@ export async function getWeekScores(week: number): Promise<UserScoreWithDetails[
 export async function getLeaderboard(): Promise<UserScoreWithDetails[]> {
   try {
     const { data, error } = await supabase
-      .from('user_scores_with_details')
+      .from('user_scores_with_details_v2')
       .select('*')
       .order('total_points', { ascending: false })
 
     if (error) {
-      console.error('Error fetching leaderboard:', error)
+      console.error('Error fetching leaderboard:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      })
       throw error
     }
 
@@ -93,7 +107,7 @@ export async function getLeaderboard(): Promise<UserScoreWithDetails[]> {
 export async function getLeaderboardWithPositions(): Promise<Array<UserScoreWithDetails & { position: number }>> {
   try {
     const { data, error } = await supabase
-      .from('user_scores_with_details')
+      .from('user_scores_with_details_v2')
       .select('*')
       .order('total_points', { ascending: false })
 

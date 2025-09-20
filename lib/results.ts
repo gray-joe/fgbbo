@@ -10,6 +10,10 @@ export interface WeeklyResult {
   eliminated: boolean
   handshake: boolean
   weekly_special: boolean
+  winner: boolean
+  finalist1: boolean
+  finalist2: boolean
+  finalist3: boolean
   created_at?: string
   updated_at?: string
 }
@@ -138,6 +142,10 @@ export async function createWeeklyResults(
     eliminated?: boolean
     handshake?: boolean
     weekly_special?: boolean
+    winner?: boolean
+    finalist1?: boolean
+    finalist2?: boolean
+    finalist3?: boolean
   }>
 ): Promise<WeeklyResult[]> {
   try {

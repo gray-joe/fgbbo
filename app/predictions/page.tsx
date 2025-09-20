@@ -16,15 +16,19 @@ export default function PredictionsPage() {
 	const { user, isAuthenticated, loading: authLoading } = useAuth();
 	const { participants, loading: participantsLoading, error: participantsError } = useActiveParticipants();
 	const { summaries, loading: summariesLoading } = useWeeklySummaries();
-	const [currentWeek, setCurrentWeek] = useState(1);
+	const [currentWeek, setCurrentWeek] = useState(0);
 	const [eliminationData, setEliminationData] = useState<Map<string, number>>(new Map());
 	const [predictions, setPredictions] = useState<WeeklyPrediction>({
-		week: 1,
+		week: 0,
 		star_baker: "",
 		technical_winner: "",
 		eliminated: "",
 		handshake: "",
 		weekly_special: "",
+		winner: "",
+		finalist1: "",
+		finalist2: "",
+		finalist3: "",
 	});
 	const [saving, setSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
@@ -37,6 +41,10 @@ export default function PredictionsPage() {
 	);
 
 	const weekThemes: Record<number, { name: string; weeklySpecial: string }> = {
+		0: {
+			name: "Overall Predictions",
+			weeklySpecial: "Who will be the overall winner and finalists?"
+		},
 		1: {
 			name: "Cake",
 			weeklySpecial: "Which Baker's Cake will have a Soggy Bottom?"
@@ -92,7 +100,7 @@ export default function PredictionsPage() {
 	const { isLocked, loading: lockLoading } = useWeekLockStatus(currentWeek);
 
 	const getCurrentWeek = () => {
-		if (!summaries.length) return 1;
+		if (!summaries.length) return 0;
 		return Math.max(...summaries.map(s => s.week)) + 1;
 	};
 
@@ -175,6 +183,18 @@ export default function PredictionsPage() {
 					case 'weekly_special':
 						newPredictions.weekly_special = pred.participant_id;
 						break;
+					case 'winner':
+						newPredictions.winner = pred.participant_id;
+						break;
+					case 'finalist1':
+						newPredictions.finalist1 = pred.participant_id;
+						break;
+					case 'finalist2':
+						newPredictions.finalist2 = pred.participant_id;
+						break;
+					case 'finalist3':
+						newPredictions.finalist3 = pred.participant_id;
+						break;
 				}
 			});
 
@@ -187,6 +207,10 @@ export default function PredictionsPage() {
 				eliminated: "",
 				handshake: "",
 				weekly_special: "",
+				winner: "",
+				finalist1: "",
+				finalist2: "",
+				finalist3: "",
 			});
 		}
 	}, [existingPredictions, currentWeek]);
@@ -348,8 +372,8 @@ export default function PredictionsPage() {
 							<h2 className="text-2xl font-bold text-gray-800">Week {currentWeek} - {getWeekTheme(currentWeek).name}</h2>
 							<div className="flex space-x-2">
 								<button
-									onClick={() => setCurrentWeek(Math.max(1, currentWeek - 1))}
-									disabled={currentWeek === 1}
+									onClick={() => setCurrentWeek(Math.max(0, currentWeek - 1))}
+									disabled={currentWeek === 0}
 									className="px-4 py-2 bg-pastel-blue text-gray-800 rounded-lg font-medium hover:bg-pastel-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 								>
 									← Previous Week
@@ -368,8 +392,120 @@ export default function PredictionsPage() {
 					<div className={`bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/30 ${isLocked === true ? 'opacity-75' : ''
 						}`}>
 						<form onSubmit={handleSubmit} className="space-y-8">
-							{/* Star Baker */}
-							<div className="bg-gradient-to-r from-pastel-blue/20 to-pastel-blue/10 rounded-xl p-6 border border-pastel-blue/30">
+							{/* Week 0 Special Predictions - Overall Winner and Finalist */}
+							{currentWeek === 0 && (
+								<>
+									{/* Overall Winner */}
+									<div className="bg-gradient-to-r from-yellow-200/30 to-yellow-100/20 rounded-xl p-6 border border-yellow-300/50">
+										<div className="flex items-center mb-4">
+											<span className="text-3xl mr-3">👑</span>
+											<h3 className="text-xl font-bold text-gray-800">Overall Winner</h3>
+										</div>
+										<p className="text-gray-600 mb-4">
+											Who do you think will win the entire competition?
+										</p>
+										<select
+											value={predictions.winner}
+											onChange={(e) => handlePredictionChange("winner", e.target.value)}
+											disabled={isLocked === true}
+											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
+												}`}
+											required
+										>
+											<option value="">Select Overall Winner</option>
+											{participants?.map((participant) => (
+												<option key={participant.id} value={participant.id}>
+													{participant.name}
+												</option>
+											))}
+										</select>
+									</div>
+
+									{/* Overall Finalist 1 */}
+									<div className="bg-gradient-to-r from-purple-200/30 to-purple-100/20 rounded-xl p-6 border border-purple-300/50">
+										<div className="flex items-center mb-4">
+											<span className="text-3xl mr-3">🥈</span>
+											<h3 className="text-xl font-bold text-gray-800">Overall Finalist #1</h3>
+										</div>
+										<p className="text-gray-600 mb-4">
+											Who do you think will be a finalist (top 3)?
+										</p>
+										<select
+											value={predictions.finalist1}
+											onChange={(e) => handlePredictionChange("finalist1", e.target.value)}
+											disabled={isLocked === true}
+											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
+												}`}
+											required
+										>
+											<option value="">Select Overall Finalist #1</option>
+											{participants?.map((participant) => (
+												<option key={participant.id} value={participant.id}>
+													{participant.name}
+												</option>
+											))}
+										</select>
+									</div>
+
+									{/* Overall Finalist 2 */}
+									<div className="bg-gradient-to-r from-purple-200/30 to-purple-100/20 rounded-xl p-6 border border-purple-300/50">
+										<div className="flex items-center mb-4">
+											<span className="text-3xl mr-3">🥉</span>
+											<h3 className="text-xl font-bold text-gray-800">Overall Finalist #2</h3>
+										</div>
+										<p className="text-gray-600 mb-4">
+											Who do you think will be another finalist (top 3)?
+										</p>
+										<select
+											value={predictions.finalist2}
+											onChange={(e) => handlePredictionChange("finalist2", e.target.value)}
+											disabled={isLocked === true}
+											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
+												}`}
+											required
+										>
+											<option value="">Select Overall Finalist #2</option>
+											{participants?.map((participant) => (
+												<option key={participant.id} value={participant.id}>
+													{participant.name}
+												</option>
+											))}
+										</select>
+									</div>
+
+									{/* Overall Finalist 3 */}
+									<div className="bg-gradient-to-r from-purple-200/30 to-purple-100/20 rounded-xl p-6 border border-purple-300/50">
+										<div className="flex items-center mb-4">
+											<span className="text-3xl mr-3">🏅</span>
+											<h3 className="text-xl font-bold text-gray-800">Overall Finalist #3</h3>
+										</div>
+										<p className="text-gray-600 mb-4">
+											Who do you think will be the third finalist (top 4)?
+										</p>
+										<select
+											value={predictions.finalist3}
+											onChange={(e) => handlePredictionChange("finalist3", e.target.value)}
+											disabled={isLocked === true}
+											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
+												}`}
+											required
+										>
+											<option value="">Select Overall Finalist #3</option>
+											{participants?.map((participant) => (
+												<option key={participant.id} value={participant.id}>
+													{participant.name}
+												</option>
+											))}
+										</select>
+									</div>
+								</>
+							)}
+							
+							{/* Regular Weekly Predictions - Only show for weeks 1+ */}
+							{currentWeek > 0 && (
+								<>
+									{/* Star Baker */}
+									<div className="bg-gradient-to-r from-pastel-blue/20 to-pastel-blue/10 rounded-xl p-6 border border-pastel-blue/30">
 								<div className="flex items-center mb-4">
 									<span className="text-3xl mr-3">⭐</span>
 									<h3 className="text-xl font-bold text-gray-800">Star Baker</h3>
@@ -495,6 +631,8 @@ export default function PredictionsPage() {
 									))}
 								</select>
 							</div>
+								</>
+							)}
 
 							{/* Submit Button */}
 							<div className="text-center pt-6">
@@ -514,7 +652,48 @@ export default function PredictionsPage() {
 						<div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 mt-8 border border-white/30">
 							<h3 className="text-xl font-bold text-gray-800 mb-4">Your Week {currentWeek} Predictions</h3>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-								{predictions.star_baker && (
+								{/* Week 0 Predictions */}
+								{currentWeek === 0 && (
+									<>
+										{predictions.winner && (
+											<div className="flex items-center space-x-3 p-3 bg-yellow-100 rounded-lg">
+												<span className="text-2xl">👑</span>
+												<span className="text-gray-700">
+													<strong>Overall Winner:</strong> {participants.find(p => p.id === predictions.winner)?.name}
+												</span>
+											</div>
+										)}
+										{predictions.finalist1 && (
+											<div className="flex items-center space-x-3 p-3 bg-purple-100 rounded-lg">
+												<span className="text-2xl">🥈</span>
+												<span className="text-gray-700">
+													<strong>Overall Finalist #1:</strong> {participants.find(p => p.id === predictions.finalist1)?.name}
+												</span>
+											</div>
+										)}
+										{predictions.finalist2 && (
+											<div className="flex items-center space-x-3 p-3 bg-purple-100 rounded-lg">
+												<span className="text-2xl">🥉</span>
+												<span className="text-gray-700">
+													<strong>Overall Finalist #2:</strong> {participants.find(p => p.id === predictions.finalist2)?.name}
+												</span>
+											</div>
+										)}
+										{predictions.finalist3 && (
+											<div className="flex items-center space-x-3 p-3 bg-purple-100 rounded-lg">
+												<span className="text-2xl">🏅</span>
+												<span className="text-gray-700">
+													<strong>Overall Finalist #3:</strong> {participants.find(p => p.id === predictions.finalist3)?.name}
+												</span>
+											</div>
+										)}
+									</>
+								)}
+								
+								{/* Regular Weekly Predictions - Only show for weeks 1+ */}
+								{currentWeek > 0 && (
+									<>
+										{predictions.star_baker && (
 									<div className="flex items-center space-x-3 p-3 bg-pastel-blue/20 rounded-lg">
 										<span className="text-2xl">⭐</span>
 										<span className="text-gray-700">
@@ -553,6 +732,8 @@ export default function PredictionsPage() {
 											<strong>Weekly Special:</strong> {participants.find(p => p.id === predictions.weekly_special)?.name}
 										</span>
 									</div>
+								)}
+									</>
 								)}
 							</div>
 						</div>

@@ -5,7 +5,7 @@ export interface Prediction {
   user_id: string
   week: number
   participant_id: string
-  prediction_type: 'star_baker' | 'technical_winner' | 'eliminated' | 'handshake' | 'weekly_special'
+  prediction_type: 'star_baker' | 'technical_winner' | 'eliminated' | 'handshake' | 'weekly_special' | 'winner' | 'finalist1' | 'finalist2' | 'finalist3'
   created_at?: string
   updated_at?: string
 }
@@ -22,6 +22,10 @@ export interface WeeklyPrediction {
   eliminated?: string
   handshake?: string
   weekly_special?: string
+  winner?: string
+  finalist1?: string
+  finalist2?: string
+  finalist3?: string
 }
 
 // Get all predictions for a user
@@ -131,6 +135,42 @@ export async function saveWeeklyPredictions(
         week,
         participant_id: predictions.weekly_special,
         prediction_type: 'weekly_special'
+      })
+    }
+
+    if (predictions.winner) {
+      predictionsToInsert.push({
+        user_id: userId,
+        week,
+        participant_id: predictions.winner,
+        prediction_type: 'winner'
+      })
+    }
+
+    if (predictions.finalist1) {
+      predictionsToInsert.push({
+        user_id: userId,
+        week,
+        participant_id: predictions.finalist1,
+        prediction_type: 'finalist1'
+      })
+    }
+
+    if (predictions.finalist2) {
+      predictionsToInsert.push({
+        user_id: userId,
+        week,
+        participant_id: predictions.finalist2,
+        prediction_type: 'finalist2'
+      })
+    }
+
+    if (predictions.finalist3) {
+      predictionsToInsert.push({
+        user_id: userId,
+        week,
+        participant_id: predictions.finalist3,
+        prediction_type: 'finalist3'
       })
     }
 

@@ -109,7 +109,7 @@ export function useWeekLockStatus(week: number) {
 }
 
 export function useNextAvailableWeek() {
-  const [nextWeek, setNextWeek] = useState<number>(1)
+  const [nextWeek, setNextWeek] = useState<number>(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

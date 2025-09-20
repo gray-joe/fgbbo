@@ -80,7 +80,7 @@ function AdminWeekLocksPageContent() {
     }
   };
 
-  const allWeeks = Array.from({ length: 12 }, (_, i) => i + 1);
+  const allWeeks = [0, ...Array.from({ length: 12 }, (_, i) => i + 1)];
   const lockedWeeks = weekLocks.map(lock => lock.week);
 
   return (
@@ -135,7 +135,7 @@ function AdminWeekLocksPageContent() {
                       <h3 className={`text-lg font-bold mb-2 ${
                         isLocked ? 'text-red-700' : 'text-green-700'
                       }`}>
-                        Week {week}
+                        {week === 0 ? 'Overall Predictions' : `Week ${week}`}
                       </h3>
                       
                       <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-3 ${
@@ -167,7 +167,7 @@ function AdminWeekLocksPageContent() {
                             {isLocked ? 'Unlocking...' : 'Locking...'}
                           </span>
                         ) : (
-                          isLocked ? '🔓 Unlock Week' : '🔒 Lock Week'
+                          isLocked ? (week === 0 ? '🔓 Unlock Overall' : '🔓 Unlock Week') : (week === 0 ? '🔒 Lock Overall' : '🔒 Lock Week')
                         )}
                       </button>
                     </div>
