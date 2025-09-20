@@ -89,6 +89,50 @@ export default function ScoringPage() {
                   </p>
                 </div>
 
+                {/* Overall Winner */}
+                <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg p-6 border border-yellow-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-gray-800">Overall Winner</h3>
+                    <span className="text-2xl font-bold text-yellow-600">+10 points</span>
+                  </div>
+                  <p className="text-gray-700 text-sm">
+                    Correctly predict the overall winner of the competition
+                  </p>
+                </div>
+
+                {/* Overall Finalist 1 */}
+                <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-gray-800">Overall Finalist #1</h3>
+                    <span className="text-2xl font-bold text-purple-600">+5 points</span>
+                  </div>
+                  <p className="text-gray-700 text-sm">
+                    Correctly predict the first overall finalist (top 3)
+                  </p>
+                </div>
+
+                {/* Overall Finalist 2 */}
+                <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-gray-800">Overall Finalist #2</h3>
+                    <span className="text-2xl font-bold text-purple-600">+5 points</span>
+                  </div>
+                  <p className="text-gray-700 text-sm">
+                    Correctly predict the second overall finalist (top 3)
+                  </p>
+                </div>
+
+                {/* Overall Finalist 3 */}
+                <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-gray-800">Overall Finalist #3</h3>
+                    <span className="text-2xl font-bold text-purple-600">+5 points</span>
+                  </div>
+                  <p className="text-gray-700 text-sm">
+                    Correctly predict the third overall finalist (top 3)
+                  </p>
+                </div>
+
                 {/* Perfect Week Bonus */}
                 <div className="bg-gradient-to-r from-pink-50 to-pink-100 rounded-lg p-6 border border-pink-200">
                   <div className="flex items-center justify-between mb-3">

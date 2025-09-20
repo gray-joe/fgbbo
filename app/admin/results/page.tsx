@@ -12,7 +12,7 @@ import { calculateWeekScores } from "../../../lib/scores";
 
 function AdminResultsPageContent() {
   const { participants, loading: participantsLoading, error: participantsError } = useParticipants();
-  const [currentWeek, setCurrentWeek] = useState(1);
+  const [currentWeek, setCurrentWeek] = useState(0);
   const { results: weeklyResults, loading: resultsLoading, error: resultsError, refetch } = useWeeklyResults(currentWeek);
   const { results: allResults, loading: allResultsLoading } = useAllResults();
   const [saving, setSaving] = useState(false);
@@ -40,6 +40,10 @@ function AdminResultsPageContent() {
     eliminated: boolean;
     handshake: boolean;
     weekly_special: boolean;
+    winner: boolean;
+    finalist1: boolean;
+    finalist2: boolean;
+    finalist3: boolean;
   }>>(new Map());
 
   // Initialize form data when participants or results change
@@ -53,6 +57,10 @@ function AdminResultsPageContent() {
         eliminated: existingResult?.eliminated || false,
         handshake: existingResult?.handshake || false,
         weekly_special: existingResult?.weekly_special || false,
+        winner: existingResult?.winner || false,
+        finalist1: existingResult?.finalist1 || false,
+        finalist2: existingResult?.finalist2 || false,
+        finalist3: existingResult?.finalist3 || false,
       });
     });
     setFormData(newFormData);
@@ -72,6 +80,10 @@ function AdminResultsPageContent() {
         eliminated: false,
         handshake: false,
         weekly_special: false,
+        winner: false,
+        finalist1: false,
+        finalist2: false,
+        finalist3: false,
       };
       newMap.set(participantId, { ...current, [field]: value });
       return newMap;
@@ -196,11 +208,13 @@ function AdminResultsPageContent() {
           {/* Week Selector */}
           <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-8 border border-white/30">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Week {currentWeek}</h2>
+              <h2 className="text-2xl font-bold text-gray-800">
+                {currentWeek === 0 ? 'Overall Results' : `Week ${currentWeek}`}
+              </h2>
               <div className="flex space-x-2">
                 <button
-                  onClick={() => setCurrentWeek(Math.max(1, currentWeek - 1))}
-                  disabled={currentWeek === 1}
+                  onClick={() => setCurrentWeek(Math.max(0, currentWeek - 1))}
+                  disabled={currentWeek === 0}
                   className="px-4 py-2 bg-blue-100 text-gray-800 rounded-lg font-medium hover:bg-blue-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   ← Previous Week
@@ -231,7 +245,7 @@ function AdminResultsPageContent() {
           {/* Success Display */}
           {saveSuccess && (
             <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
-              <strong>Success!</strong> Results saved and scores calculated for Week {currentWeek}.
+              <strong>Success!</strong> Results saved and scores calculated for {currentWeek === 0 ? 'Overall Results' : `Week ${currentWeek}`}.
               <button
                 onClick={() => setSaveSuccess(false)}
                 className="float-right font-bold"
@@ -259,11 +273,22 @@ function AdminResultsPageContent() {
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th className="text-left py-3 px-4 font-semibold text-gray-800">Baker</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-800">⭐ Star Baker</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-800">🏆 Technical Winner</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-800">😢 Eliminated</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-800">🤝 Handshake</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-800">✨ Weekly Special</th>
+                    {currentWeek === 0 ? (
+                      <>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-800">👑 Winner</th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-800">🥈 Finalist #1</th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-800">🥉 Finalist #2</th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-800">🏅 Finalist #3</th>
+                      </>
+                    ) : (
+                      <>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-800">⭐ Star Baker</th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-800">🏆 Technical Winner</th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-800">😢 Eliminated</th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-800">🤝 Handshake</th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-800">✨ Weekly Special</th>
+                      </>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -274,6 +299,10 @@ function AdminResultsPageContent() {
                       eliminated: false,
                       handshake: false,
                       weekly_special: false,
+                      winner: false,
+                      finalist1: false,
+                      finalist2: false,
+                      finalist3: false,
                     };
 
                     const eliminatedInPreviousWeeks = getEliminatedInPreviousWeeks(participant.id);
@@ -309,71 +338,130 @@ function AdminResultsPageContent() {
                             </div>
                           </div>
                         </td>
-                        <td className="text-center py-3 px-4">
-                          <input
-                            type="checkbox"
-                            checked={participantData.star_baker}
-                            onChange={(e) => handleCheckboxChange(participant.id, 'star_baker', e.target.checked)}
-                            disabled={isDisabled}
-                            className={`w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 ${
-                              isDisabled 
-                                ? 'bg-gray-200 cursor-not-allowed' 
-                                : 'bg-gray-100 focus:ring-blue-500'
-                            }`}
-                          />
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <input
-                            type="checkbox"
-                            checked={participantData.technical_winner}
-                            onChange={(e) => handleCheckboxChange(participant.id, 'technical_winner', e.target.checked)}
-                            disabled={isDisabled}
-                            className={`w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 ${
-                              isDisabled 
-                                ? 'bg-gray-200 cursor-not-allowed' 
-                                : 'bg-gray-100 focus:ring-blue-500'
-                            }`}
-                          />
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <input
-                            type="checkbox"
-                            checked={participantData.eliminated}
-                            onChange={(e) => handleCheckboxChange(participant.id, 'eliminated', e.target.checked)}
-                            disabled={isDisabled}
-                            className={`w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-2 ${
-                              isDisabled 
-                                ? 'bg-gray-200 cursor-not-allowed' 
-                                : 'bg-gray-100 focus:ring-red-500'
-                            }`}
-                          />
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <input
-                            type="checkbox"
-                            checked={participantData.handshake}
-                            onChange={(e) => handleCheckboxChange(participant.id, 'handshake', e.target.checked)}
-                            disabled={isDisabled}
-                            className={`w-5 h-5 text-yellow-600 border-gray-300 rounded focus:ring-2 ${
-                              isDisabled 
-                                ? 'bg-gray-200 cursor-not-allowed' 
-                                : 'bg-gray-100 focus:ring-yellow-500'
-                            }`}
-                          />
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <input
-                            type="checkbox"
-                            checked={participantData.weekly_special}
-                            onChange={(e) => handleCheckboxChange(participant.id, 'weekly_special', e.target.checked)}
-                            disabled={isDisabled}
-                            className={`w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-2 ${
-                              isDisabled 
-                                ? 'bg-gray-200 cursor-not-allowed' 
-                                : 'bg-gray-100 focus:ring-purple-500'
-                            }`}
-                          />
-                        </td>
+                        {currentWeek === 0 ? (
+                          <>
+                            <td className="text-center py-3 px-4">
+                              <input
+                                type="checkbox"
+                                checked={participantData.winner}
+                                onChange={(e) => handleCheckboxChange(participant.id, 'winner', e.target.checked)}
+                                disabled={isDisabled}
+                                className={`w-5 h-5 text-yellow-600 border-gray-300 rounded focus:ring-2 ${
+                                  isDisabled 
+                                    ? 'bg-gray-200 cursor-not-allowed' 
+                                    : 'bg-gray-100 focus:ring-yellow-500'
+                                }`}
+                              />
+                            </td>
+                            <td className="text-center py-3 px-4">
+                              <input
+                                type="checkbox"
+                                checked={participantData.finalist1}
+                                onChange={(e) => handleCheckboxChange(participant.id, 'finalist1', e.target.checked)}
+                                disabled={isDisabled}
+                                className={`w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-2 ${
+                                  isDisabled 
+                                    ? 'bg-gray-200 cursor-not-allowed' 
+                                    : 'bg-gray-100 focus:ring-purple-500'
+                                }`}
+                              />
+                            </td>
+                            <td className="text-center py-3 px-4">
+                              <input
+                                type="checkbox"
+                                checked={participantData.finalist2}
+                                onChange={(e) => handleCheckboxChange(participant.id, 'finalist2', e.target.checked)}
+                                disabled={isDisabled}
+                                className={`w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-2 ${
+                                  isDisabled 
+                                    ? 'bg-gray-200 cursor-not-allowed' 
+                                    : 'bg-gray-100 focus:ring-purple-500'
+                                }`}
+                              />
+                            </td>
+                            <td className="text-center py-3 px-4">
+                              <input
+                                type="checkbox"
+                                checked={participantData.finalist3}
+                                onChange={(e) => handleCheckboxChange(participant.id, 'finalist3', e.target.checked)}
+                                disabled={isDisabled}
+                                className={`w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-2 ${
+                                  isDisabled 
+                                    ? 'bg-gray-200 cursor-not-allowed' 
+                                    : 'bg-gray-100 focus:ring-purple-500'
+                                }`}
+                              />
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="text-center py-3 px-4">
+                              <input
+                                type="checkbox"
+                                checked={participantData.star_baker}
+                                onChange={(e) => handleCheckboxChange(participant.id, 'star_baker', e.target.checked)}
+                                disabled={isDisabled}
+                                className={`w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 ${
+                                  isDisabled 
+                                    ? 'bg-gray-200 cursor-not-allowed' 
+                                    : 'bg-gray-100 focus:ring-blue-500'
+                                }`}
+                              />
+                            </td>
+                            <td className="text-center py-3 px-4">
+                              <input
+                                type="checkbox"
+                                checked={participantData.technical_winner}
+                                onChange={(e) => handleCheckboxChange(participant.id, 'technical_winner', e.target.checked)}
+                                disabled={isDisabled}
+                                className={`w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 ${
+                                  isDisabled 
+                                    ? 'bg-gray-200 cursor-not-allowed' 
+                                    : 'bg-gray-100 focus:ring-blue-500'
+                                }`}
+                              />
+                            </td>
+                            <td className="text-center py-3 px-4">
+                              <input
+                                type="checkbox"
+                                checked={participantData.eliminated}
+                                onChange={(e) => handleCheckboxChange(participant.id, 'eliminated', e.target.checked)}
+                                disabled={isDisabled}
+                                className={`w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-2 ${
+                                  isDisabled 
+                                    ? 'bg-gray-200 cursor-not-allowed' 
+                                    : 'bg-gray-100 focus:ring-red-500'
+                                }`}
+                              />
+                            </td>
+                            <td className="text-center py-3 px-4">
+                              <input
+                                type="checkbox"
+                                checked={participantData.handshake}
+                                onChange={(e) => handleCheckboxChange(participant.id, 'handshake', e.target.checked)}
+                                disabled={isDisabled}
+                                className={`w-5 h-5 text-yellow-600 border-gray-300 rounded focus:ring-2 ${
+                                  isDisabled 
+                                    ? 'bg-gray-200 cursor-not-allowed' 
+                                    : 'bg-gray-100 focus:ring-yellow-500'
+                                }`}
+                              />
+                            </td>
+                            <td className="text-center py-3 px-4">
+                              <input
+                                type="checkbox"
+                                checked={participantData.weekly_special}
+                                onChange={(e) => handleCheckboxChange(participant.id, 'weekly_special', e.target.checked)}
+                                disabled={isDisabled}
+                                className={`w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-2 ${
+                                  isDisabled 
+                                    ? 'bg-gray-200 cursor-not-allowed' 
+                                    : 'bg-gray-100 focus:ring-purple-500'
+                                }`}
+                              />
+                            </td>
+                          </>
+                        )}
                       </tr>
                     );
                   })}

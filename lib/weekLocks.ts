@@ -101,8 +101,8 @@ export async function getNextAvailableWeek(): Promise<number> {
 
     const lockedWeeks = data?.map(lock => lock.week) || []
     
-    // Find the first week that's not locked
-    let nextWeek = 1
+    // Find the first week that's not locked, starting with week 0
+    let nextWeek = 0
     while (lockedWeeks.includes(nextWeek)) {
       nextWeek++
     }
