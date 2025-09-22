@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useAuth } from "../../lib/hooks/useAuth";
 
 interface NavItem {
@@ -13,6 +13,7 @@ interface NavItem {
 
 const mainNavItems: NavItem[] = [
   { name: "Dashboard", href: "/dashboard", icon: "📊" },
+  { name: "Overall Predictions", href: "/predictions?week=0", icon: "👑" },
   { name: "Predictions", href: "/predictions", icon: "🔮" },
   { name: "Leagues", href: "/leagues", icon: "🏆" },
   { name: "Results", href: "/results", icon: "📈" },
@@ -30,12 +31,17 @@ const bottomNavItems: NavItem[] = [
   { name: "Account", href: "/account", icon: "⚙️" },
 ];
 
-export default function SideNav() {
+function SideNavContent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { isAuthenticated, isAdmin, signOut: handleSignOut } = useAuth();
 
   const isActive = (href: string) => {
+    if (href === "/predictions?week=0") {
+      // Check if we're on predictions page with week=0
+      return pathname === "/predictions" && searchParams.get('week') === '0';
+    }
     return pathname === href;
   };
 
@@ -173,5 +179,34 @@ export default function SideNav() {
       </div>
     </div>
     </>
+  );
+}
+
+export default function SideNav() {
+  return (
+    <Suspense fallback={
+      <div className="fixed left-0 top-0 h-full bg-white/95 backdrop-blur-sm border-r border-white/30 shadow-xl z-50 w-64">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-pastel-pink to-pastel-blue rounded-full flex items-center justify-center">
+              <span className="text-xl">🍰</span>
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-gray-800">GBBO Fantasy</h1>
+              <p className="text-xs text-gray-600">League</p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="animate-pulse space-y-2">
+            <div className="h-12 bg-gray-200 rounded-lg"></div>
+            <div className="h-12 bg-gray-200 rounded-lg"></div>
+            <div className="h-12 bg-gray-200 rounded-lg"></div>
+          </div>
+        </div>
+      </div>
+    }>
+      <SideNavContent />
+    </Suspense>
   );
 }

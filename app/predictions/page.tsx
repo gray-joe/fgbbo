@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import AppLayout from "../components/AppLayout";
 import ErrorScreen from "../components/ErrorScreen";
 import { useActiveParticipants } from "../../lib/hooks/useParticipants";
@@ -12,10 +13,11 @@ import { WeeklyPrediction } from "../../lib/predictions";
 import { getAllResults } from "../../lib/results";
 import { getErrorConfig, determineErrorType } from "../../lib/errorUtils";
 
-export default function PredictionsPage() {
+function PredictionsPageContent() {
 	const { user, isAuthenticated, loading: authLoading } = useAuth();
 	const { participants, loading: participantsLoading, error: participantsError } = useActiveParticipants();
 	const { summaries, loading: summariesLoading } = useWeeklySummaries();
+	const searchParams = useSearchParams();
 	const [currentWeek, setCurrentWeek] = useState(0);
 	const [eliminationData, setEliminationData] = useState<Map<string, number>>(new Map());
 	const [predictions, setPredictions] = useState<WeeklyPrediction>({
@@ -104,12 +106,23 @@ export default function PredictionsPage() {
 		return Math.max(...summaries.map(s => s.week)) + 1;
 	};
 
+	// Handle URL parameter for week (priority over calculated week)
 	useEffect(() => {
+		const weekParam = searchParams.get('week');
+		if (weekParam !== null) {
+			const weekNumber = parseInt(weekParam, 10);
+			if (!isNaN(weekNumber) && weekNumber >= 0) {
+				setCurrentWeek(weekNumber);
+				return; // Don't calculate week if URL parameter is present
+			}
+		}
+		
+		// Only calculate week if no URL parameter or invalid parameter
 		if (!summariesLoading && summaries.length > 0) {
 			const calculatedCurrentWeek = getCurrentWeek();
 			setCurrentWeek(calculatedCurrentWeek);
 		}
-	}, [summaries, summariesLoading]);
+	}, [summaries, summariesLoading, searchParams]);
 
 	useEffect(() => {
 		const loadEliminationData = async () => {
@@ -185,6 +198,8 @@ export default function PredictionsPage() {
 						break;
 					case 'winner':
 						newPredictions.winner = pred.participant_id;
+						// Winner is automatically also finalist1
+						newPredictions.finalist1 = pred.participant_id;
 						break;
 					case 'finalist1':
 						newPredictions.finalist1 = pred.participant_id;
@@ -392,21 +407,25 @@ export default function PredictionsPage() {
 					<div className={`bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/30 ${isLocked === true ? 'opacity-75' : ''
 						}`}>
 						<form onSubmit={handleSubmit} className="space-y-8">
-							{/* Week 0 Special Predictions - Overall Winner and Finalist */}
+							{/* Week 0 Special Predictions - Winner + 2 Finalists */}
 							{currentWeek === 0 && (
 								<>
-									{/* Overall Winner */}
+									{/* Overall Winner (also sets finalist1) */}
 									<div className="bg-gradient-to-r from-yellow-200/30 to-yellow-100/20 rounded-xl p-6 border border-yellow-300/50">
 										<div className="flex items-center mb-4">
 											<span className="text-3xl mr-3">👑</span>
-											<h3 className="text-xl font-bold text-gray-800">Overall Winner</h3>
+											<h3 className="text-xl font-bold text-gray-800">Winner</h3>
 										</div>
 										<p className="text-gray-600 mb-4">
-											Who do you think will win the entire competition?
+											Who do you think will win the entire competition? (This person will also be counted as a finalist)
 										</p>
 										<select
 											value={predictions.winner}
-											onChange={(e) => handlePredictionChange("winner", e.target.value)}
+											onChange={(e) => {
+												handlePredictionChange("winner", e.target.value);
+												// Automatically set as finalist1 since winner is also a finalist
+												handlePredictionChange("finalist1", e.target.value);
+											}}
 											disabled={isLocked === true}
 											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
 												}`}
@@ -421,40 +440,14 @@ export default function PredictionsPage() {
 										</select>
 									</div>
 
-									{/* Overall Finalist 1 */}
+									{/* Overall Finalist #2 */}
 									<div className="bg-gradient-to-r from-purple-200/30 to-purple-100/20 rounded-xl p-6 border border-purple-300/50">
 										<div className="flex items-center mb-4">
 											<span className="text-3xl mr-3">🥈</span>
-											<h3 className="text-xl font-bold text-gray-800">Overall Finalist #1</h3>
+											<h3 className="text-xl font-bold text-gray-800">Finalist #2</h3>
 										</div>
 										<p className="text-gray-600 mb-4">
-											Who do you think will be a finalist (top 3)?
-										</p>
-										<select
-											value={predictions.finalist1}
-											onChange={(e) => handlePredictionChange("finalist1", e.target.value)}
-											disabled={isLocked === true}
-											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
-												}`}
-											required
-										>
-											<option value="">Select Overall Finalist #1</option>
-											{participants?.map((participant) => (
-												<option key={participant.id} value={participant.id}>
-													{participant.name}
-												</option>
-											))}
-										</select>
-									</div>
-
-									{/* Overall Finalist 2 */}
-									<div className="bg-gradient-to-r from-purple-200/30 to-purple-100/20 rounded-xl p-6 border border-purple-300/50">
-										<div className="flex items-center mb-4">
-											<span className="text-3xl mr-3">🥉</span>
-											<h3 className="text-xl font-bold text-gray-800">Overall Finalist #2</h3>
-										</div>
-										<p className="text-gray-600 mb-4">
-											Who do you think will be another finalist (top 3)?
+											Who do you think will be the second finalist?
 										</p>
 										<select
 											value={predictions.finalist2}
@@ -473,14 +466,14 @@ export default function PredictionsPage() {
 										</select>
 									</div>
 
-									{/* Overall Finalist 3 */}
+									{/* Overall Finalist #3 */}
 									<div className="bg-gradient-to-r from-purple-200/30 to-purple-100/20 rounded-xl p-6 border border-purple-300/50">
 										<div className="flex items-center mb-4">
-											<span className="text-3xl mr-3">🏅</span>
-											<h3 className="text-xl font-bold text-gray-800">Overall Finalist #3</h3>
+											<span className="text-3xl mr-3">🥉</span>
+											<h3 className="text-xl font-bold text-gray-800">Finalist #3</h3>
 										</div>
 										<p className="text-gray-600 mb-4">
-											Who do you think will be the third finalist (top 4)?
+											Who do you think will be the third finalist?
 										</p>
 										<select
 											value={predictions.finalist3}
@@ -652,7 +645,7 @@ export default function PredictionsPage() {
 						<div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 mt-8 border border-white/30">
 							<h3 className="text-xl font-bold text-gray-800 mb-4">Your Week {currentWeek} Predictions</h3>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-								{/* Week 0 Predictions */}
+								{/* Week 0 Predictions - Winner + 2 Finalists */}
 								{currentWeek === 0 && (
 									<>
 										{predictions.winner && (
@@ -663,17 +656,9 @@ export default function PredictionsPage() {
 												</span>
 											</div>
 										)}
-										{predictions.finalist1 && (
-											<div className="flex items-center space-x-3 p-3 bg-purple-100 rounded-lg">
-												<span className="text-2xl">🥈</span>
-												<span className="text-gray-700">
-													<strong>Overall Finalist #1:</strong> {participants.find(p => p.id === predictions.finalist1)?.name}
-												</span>
-											</div>
-										)}
 										{predictions.finalist2 && (
 											<div className="flex items-center space-x-3 p-3 bg-purple-100 rounded-lg">
-												<span className="text-2xl">🥉</span>
+												<span className="text-2xl">🥈</span>
 												<span className="text-gray-700">
 													<strong>Overall Finalist #2:</strong> {participants.find(p => p.id === predictions.finalist2)?.name}
 												</span>
@@ -681,7 +666,7 @@ export default function PredictionsPage() {
 										)}
 										{predictions.finalist3 && (
 											<div className="flex items-center space-x-3 p-3 bg-purple-100 rounded-lg">
-												<span className="text-2xl">🏅</span>
+												<span className="text-2xl">🥉</span>
 												<span className="text-gray-700">
 													<strong>Overall Finalist #3:</strong> {participants.find(p => p.id === predictions.finalist3)?.name}
 												</span>
@@ -743,3 +728,23 @@ export default function PredictionsPage() {
 		</AppLayout>
 	);
 }
+
+export default function PredictionsPage() {
+	return (
+		<Suspense fallback={
+			<AppLayout>
+				<div className="min-h-screen p-8">
+					<div className="max-w-6xl mx-auto">
+						<div className="text-center">
+							<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-400 mx-auto"></div>
+							<p className="text-gray-700 text-lg mt-4">Loading predictions...</p>
+						</div>
+					</div>
+				</div>
+			</AppLayout>
+		}>
+			<PredictionsPageContent />
+		</Suspense>
+	);
+}
+
