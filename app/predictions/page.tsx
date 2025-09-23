@@ -19,6 +19,7 @@ function PredictionsPageContent() {
 	const { summaries, loading: summariesLoading } = useWeeklySummaries();
 	const searchParams = useSearchParams();
 	const [currentWeek, setCurrentWeek] = useState(0);
+	const [isClient, setIsClient] = useState(false);
 	const [eliminationData, setEliminationData] = useState<Map<string, number>>(new Map());
 	const [predictions, setPredictions] = useState<WeeklyPrediction>({
 		week: 0,
@@ -106,8 +107,15 @@ function PredictionsPageContent() {
 		return Math.max(...summaries.map(s => s.week)) + 1;
 	};
 
+	// Ensure we're on the client side
+	useEffect(() => {
+		setIsClient(true);
+	}, []);
+
 	// Handle URL parameter for week (priority over calculated week)
 	useEffect(() => {
+		if (!isClient) return; // Don't process search params on server
+		
 		const weekParam = searchParams.get('week');
 		if (weekParam !== null) {
 			const weekNumber = parseInt(weekParam, 10);
@@ -122,7 +130,7 @@ function PredictionsPageContent() {
 			const calculatedCurrentWeek = getCurrentWeek();
 			setCurrentWeek(calculatedCurrentWeek);
 		}
-	}, [summaries, summariesLoading, searchParams]);
+	}, [summaries, summariesLoading, searchParams, isClient]);
 
 	useEffect(() => {
 		const loadEliminationData = async () => {
