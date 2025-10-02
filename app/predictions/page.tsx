@@ -69,8 +69,8 @@ function PredictionsPageContent() {
 			weeklySpecial: "Which Baker(s) will not have their chocolate set in time?"
 		},
 		6: {
-			name: "TBD",
-			weeklySpecial: "TBD"
+			name: "Patisserie",
+			weeklySpecial: "Who's structure will collapse?"
 		},
 		7: {
 			name: "TBD",
@@ -115,7 +115,7 @@ function PredictionsPageContent() {
 	// Handle URL parameter for week (priority over calculated week)
 	useEffect(() => {
 		if (!isClient) return; // Don't process search params on server
-		
+
 		const weekParam = searchParams.get('week');
 		if (weekParam !== null) {
 			const weekNumber = parseInt(weekParam, 10);
@@ -124,7 +124,7 @@ function PredictionsPageContent() {
 				return; // Don't calculate week if URL parameter is present
 			}
 		}
-		
+
 		// Only calculate week if no URL parameter or invalid parameter
 		if (!summariesLoading && summaries.length > 0) {
 			const calculatedCurrentWeek = getCurrentWeek();
@@ -501,137 +501,137 @@ function PredictionsPageContent() {
 									</div>
 								</>
 							)}
-							
+
 							{/* Regular Weekly Predictions - Only show for weeks 1+ */}
 							{currentWeek > 0 && (
 								<>
 									{/* Star Baker */}
 									<div className="bg-gradient-to-r from-pastel-blue/20 to-pastel-blue/10 rounded-xl p-6 border border-pastel-blue/30">
-								<div className="flex items-center mb-4">
-									<span className="text-3xl mr-3">⭐</span>
-									<h3 className="text-xl font-bold text-gray-800">Star Baker</h3>
-								</div>
-								<p className="text-gray-600 mb-4">
-									Who will be crowned Star Baker this week?
-								</p>
-								<select
-									value={predictions.star_baker}
-									onChange={(e) => handlePredictionChange("star_baker", e.target.value)}
-									disabled={isLocked === true}
-									className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
-										}`}
-									required
-								>
-									<option value="">Select Star Baker</option>
-									{getAvailableParticipants().map((participant) => (
-										<option key={participant.id} value={participant.id}>
-											{participant.name}
-										</option>
-									))}
-								</select>
-							</div>
+										<div className="flex items-center mb-4">
+											<span className="text-3xl mr-3">⭐</span>
+											<h3 className="text-xl font-bold text-gray-800">Star Baker</h3>
+										</div>
+										<p className="text-gray-600 mb-4">
+											Who will be crowned Star Baker this week?
+										</p>
+										<select
+											value={predictions.star_baker}
+											onChange={(e) => handlePredictionChange("star_baker", e.target.value)}
+											disabled={isLocked === true}
+											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-blue focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
+												}`}
+											required
+										>
+											<option value="">Select Star Baker</option>
+											{getAvailableParticipants().map((participant) => (
+												<option key={participant.id} value={participant.id}>
+													{participant.name}
+												</option>
+											))}
+										</select>
+									</div>
 
-							{/* Technical Winner */}
-							<div className="bg-gradient-to-r from-pastel-pink/20 to-pastel-pink/10 rounded-xl p-6 border border-pastel-pink/30">
-								<div className="flex items-center mb-4">
-									<span className="text-3xl mr-3">🏆</span>
-									<h3 className="text-xl font-bold text-gray-800">Technical Challenge Winner</h3>
-								</div>
-								<p className="text-gray-600 mb-4">
-									Who will triumph in the technical challenge?
-								</p>
-								<select
-									value={predictions.technical_winner}
-									onChange={(e) => handlePredictionChange("technical_winner", e.target.value)}
-									disabled={isLocked === true}
-									className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-pink focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
-										}`}
-									required
-								>
-									<option value="">Select Technical Winner</option>
-									{getAvailableParticipants().map((participant) => (
-										<option key={participant.id} value={participant.id}>
-											{participant.name}
-										</option>
-									))}
-								</select>
-							</div>
+									{/* Technical Winner */}
+									<div className="bg-gradient-to-r from-pastel-pink/20 to-pastel-pink/10 rounded-xl p-6 border border-pastel-pink/30">
+										<div className="flex items-center mb-4">
+											<span className="text-3xl mr-3">🏆</span>
+											<h3 className="text-xl font-bold text-gray-800">Technical Challenge Winner</h3>
+										</div>
+										<p className="text-gray-600 mb-4">
+											Who will triumph in the technical challenge?
+										</p>
+										<select
+											value={predictions.technical_winner}
+											onChange={(e) => handlePredictionChange("technical_winner", e.target.value)}
+											disabled={isLocked === true}
+											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pastel-pink focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
+												}`}
+											required
+										>
+											<option value="">Select Technical Winner</option>
+											{getAvailableParticipants().map((participant) => (
+												<option key={participant.id} value={participant.id}>
+													{participant.name}
+												</option>
+											))}
+										</select>
+									</div>
 
-							{/* Eliminated */}
-							<div className="bg-gradient-to-r from-red-100 to-red-50 rounded-xl p-6 border border-red-200">
-								<div className="flex items-center mb-4">
-									<span className="text-3xl mr-3">😢</span>
-									<h3 className="text-xl font-bold text-gray-800">Eliminated</h3>
-								</div>
-								<p className="text-gray-600 mb-4">
-									Who will be sent home this week?
-								</p>
-								<select
-									value={predictions.eliminated}
-									onChange={(e) => handlePredictionChange("eliminated", e.target.value)}
-									disabled={isLocked === true}
-									className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
-										}`}
-									required
-								>
-									<option value="">Select Eliminated Contestant</option>
-									{getAvailableParticipants().map((participant) => (
-										<option key={participant.id} value={participant.id}>
-											{participant.name}
-										</option>
-									))}
-								</select>
-							</div>
+									{/* Eliminated */}
+									<div className="bg-gradient-to-r from-red-100 to-red-50 rounded-xl p-6 border border-red-200">
+										<div className="flex items-center mb-4">
+											<span className="text-3xl mr-3">😢</span>
+											<h3 className="text-xl font-bold text-gray-800">Eliminated</h3>
+										</div>
+										<p className="text-gray-600 mb-4">
+											Who will be sent home this week?
+										</p>
+										<select
+											value={predictions.eliminated}
+											onChange={(e) => handlePredictionChange("eliminated", e.target.value)}
+											disabled={isLocked === true}
+											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
+												}`}
+											required
+										>
+											<option value="">Select Eliminated Contestant</option>
+											{getAvailableParticipants().map((participant) => (
+												<option key={participant.id} value={participant.id}>
+													{participant.name}
+												</option>
+											))}
+										</select>
+									</div>
 
-							{/* Handshake */}
-							<div className="bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-xl p-6 border border-yellow-200">
-								<div className="flex items-center mb-4">
-									<span className="text-3xl mr-3">🤝</span>
-									<h3 className="text-xl font-bold text-gray-800">Hollywood Handshake</h3>
-								</div>
-								<p className="text-gray-600 mb-4">
-									Who will receive the coveted handshake?
-								</p>
-								<select
-									value={predictions.handshake}
-									onChange={(e) => handlePredictionChange("handshake", e.target.value)}
-									disabled={isLocked === true}
-									className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
-										}`}
-								>
-									<option value="">Select Handshake Recipient (Optional)</option>
-									{getAvailableParticipants().map((participant) => (
-										<option key={participant.id} value={participant.id}>
-											{participant.name}
-										</option>
-									))}
-								</select>
-							</div>
+									{/* Handshake */}
+									<div className="bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-xl p-6 border border-yellow-200">
+										<div className="flex items-center mb-4">
+											<span className="text-3xl mr-3">🤝</span>
+											<h3 className="text-xl font-bold text-gray-800">Hollywood Handshake</h3>
+										</div>
+										<p className="text-gray-600 mb-4">
+											Who will receive the coveted handshake?
+										</p>
+										<select
+											value={predictions.handshake}
+											onChange={(e) => handlePredictionChange("handshake", e.target.value)}
+											disabled={isLocked === true}
+											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
+												}`}
+										>
+											<option value="">Select Handshake Recipient</option>
+											{getAvailableParticipants().map((participant) => (
+												<option key={participant.id} value={participant.id}>
+													{participant.name}
+												</option>
+											))}
+										</select>
+									</div>
 
-							{/* Weekly Special */}
-							<div className="bg-gradient-to-r from-purple-100 to-purple-50 rounded-xl p-6 border border-purple-200">
-								<div className="flex items-center mb-4">
-									<span className="text-3xl mr-3">✨</span>
-									<h3 className="text-xl font-bold text-gray-800">Weekly Special</h3>
-								</div>
-								<p className="text-gray-600 mb-4">
-									{getWeekTheme(currentWeek).weeklySpecial}
-								</p>
-								<select
-									value={predictions.weekly_special}
-									onChange={(e) => handlePredictionChange("weekly_special", e.target.value)}
-									disabled={isLocked === true}
-									className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
-										}`}
-								>
-									<option value="">Select Weekly Special (Optional)</option>
-									{getAvailableParticipants().map((participant) => (
-										<option key={participant.id} value={participant.id}>
-											{participant.name}
-										</option>
-									))}
-								</select>
-							</div>
+									{/* Weekly Special */}
+									<div className="bg-gradient-to-r from-purple-100 to-purple-50 rounded-xl p-6 border border-purple-200">
+										<div className="flex items-center mb-4">
+											<span className="text-3xl mr-3">✨</span>
+											<h3 className="text-xl font-bold text-gray-800">Weekly Special</h3>
+										</div>
+										<p className="text-gray-600 mb-4">
+											{getWeekTheme(currentWeek).weeklySpecial}
+										</p>
+										<select
+											value={predictions.weekly_special}
+											onChange={(e) => handlePredictionChange("weekly_special", e.target.value)}
+											disabled={isLocked === true}
+											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
+												}`}
+										>
+											<option value="">Select Weekly Special (Optional)</option>
+											{getAvailableParticipants().map((participant) => (
+												<option key={participant.id} value={participant.id}>
+													{participant.name}
+												</option>
+											))}
+										</select>
+									</div>
 								</>
 							)}
 
@@ -682,50 +682,50 @@ function PredictionsPageContent() {
 										)}
 									</>
 								)}
-								
+
 								{/* Regular Weekly Predictions - Only show for weeks 1+ */}
 								{currentWeek > 0 && (
 									<>
 										{predictions.star_baker && (
-									<div className="flex items-center space-x-3 p-3 bg-pastel-blue/20 rounded-lg">
-										<span className="text-2xl">⭐</span>
-										<span className="text-gray-700">
-											<strong>Star Baker:</strong> {participants.find(p => p.id === predictions.star_baker)?.name}
-										</span>
-									</div>
-								)}
-								{predictions.technical_winner && (
-									<div className="flex items-center space-x-3 p-3 bg-pastel-pink/20 rounded-lg">
-										<span className="text-2xl">🏆</span>
-										<span className="text-gray-700">
-											<strong>Technical Winner:</strong> {participants.find(p => p.id === predictions.technical_winner)?.name}
-										</span>
-									</div>
-								)}
-								{predictions.eliminated && (
-									<div className="flex items-center space-x-3 p-3 bg-red-100 rounded-lg">
-										<span className="text-2xl">😢</span>
-										<span className="text-gray-700">
-											<strong>Eliminated:</strong> {participants.find(p => p.id === predictions.eliminated)?.name}
-										</span>
-									</div>
-								)}
-								{predictions.handshake && (
-									<div className="flex items-center space-x-3 p-3 bg-yellow-100 rounded-lg">
-										<span className="text-2xl">🤝</span>
-										<span className="text-gray-700">
-											<strong>Handshake:</strong> {participants.find(p => p.id === predictions.handshake)?.name}
-										</span>
-									</div>
-								)}
-								{predictions.weekly_special && (
-									<div className="flex items-center space-x-3 p-3 bg-purple-100 rounded-lg">
-										<span className="text-2xl">✨</span>
-										<span className="text-gray-700">
-											<strong>Weekly Special:</strong> {participants.find(p => p.id === predictions.weekly_special)?.name}
-										</span>
-									</div>
-								)}
+											<div className="flex items-center space-x-3 p-3 bg-pastel-blue/20 rounded-lg">
+												<span className="text-2xl">⭐</span>
+												<span className="text-gray-700">
+													<strong>Star Baker:</strong> {participants.find(p => p.id === predictions.star_baker)?.name}
+												</span>
+											</div>
+										)}
+										{predictions.technical_winner && (
+											<div className="flex items-center space-x-3 p-3 bg-pastel-pink/20 rounded-lg">
+												<span className="text-2xl">🏆</span>
+												<span className="text-gray-700">
+													<strong>Technical Winner:</strong> {participants.find(p => p.id === predictions.technical_winner)?.name}
+												</span>
+											</div>
+										)}
+										{predictions.eliminated && (
+											<div className="flex items-center space-x-3 p-3 bg-red-100 rounded-lg">
+												<span className="text-2xl">😢</span>
+												<span className="text-gray-700">
+													<strong>Eliminated:</strong> {participants.find(p => p.id === predictions.eliminated)?.name}
+												</span>
+											</div>
+										)}
+										{predictions.handshake && (
+											<div className="flex items-center space-x-3 p-3 bg-yellow-100 rounded-lg">
+												<span className="text-2xl">🤝</span>
+												<span className="text-gray-700">
+													<strong>Handshake:</strong> {participants.find(p => p.id === predictions.handshake)?.name}
+												</span>
+											</div>
+										)}
+										{predictions.weekly_special && (
+											<div className="flex items-center space-x-3 p-3 bg-purple-100 rounded-lg">
+												<span className="text-2xl">✨</span>
+												<span className="text-gray-700">
+													<strong>Weekly Special:</strong> {participants.find(p => p.id === predictions.weekly_special)?.name}
+												</span>
+											</div>
+										)}
 									</>
 								)}
 							</div>
