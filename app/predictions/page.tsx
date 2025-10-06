@@ -69,7 +69,7 @@ function PredictionsPageContent() {
 			weeklySpecial: "Which Baker(s) will not have their chocolate set in time?"
 		},
 		6: {
-			name: "Patisserie",
+			name: "Pastry",
 			weeklySpecial: "Who's structure will collapse?"
 		},
 		7: {
