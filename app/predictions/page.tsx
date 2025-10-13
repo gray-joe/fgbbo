@@ -73,8 +73,8 @@ function PredictionsPageContent() {
 			weeklySpecial: "Who's structure will collapse?"
 		},
 		7: {
-			name: "TBD",
-			weeklySpecial: "TBD"
+			name: "Meringue",
+			weeklySpecial: "Who's meringue will be the first to crack?"
 		},
 		8: {
 			name: "TBD",
