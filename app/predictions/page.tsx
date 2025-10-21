@@ -77,8 +77,8 @@ function PredictionsPageContent() {
 			weeklySpecial: "Who's meringue will be the first to crack?"
 		},
 		8: {
-			name: "TBD",
-			weeklySpecial: "TBD"
+			name: "Dessert",
+			weeklySpecial: "Who will come last in the technical?"
 		},
 		9: {
 			name: "TBD",
