@@ -81,8 +81,8 @@ function PredictionsPageContent() {
 			weeklySpecial: "Who will come last in the technical?"
 		},
 		9: {
-			name: "TBD",
-			weeklySpecial: "TBD"
+			name: "Patisserie",
+			weeklySpecial: "Who's bake will lack flavor?"
 		}
 	}
 
