@@ -83,6 +83,10 @@ function PredictionsPageContent() {
 		9: {
 			name: "Patisserie",
 			weeklySpecial: "Who's bake will lack flavor?"
+		},
+		10: {
+			name: "The Final!",
+			weeklySpecial: "Who will run out of time?"
 		}
 	}
 
