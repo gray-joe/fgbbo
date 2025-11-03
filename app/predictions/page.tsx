@@ -561,31 +561,33 @@ function PredictionsPageContent() {
 										</select>
 									</div>
 
-									{/* Eliminated */}
-									<div className="bg-gradient-to-r from-red-100 to-red-50 rounded-xl p-6 border border-red-200">
-										<div className="flex items-center mb-4">
-											<span className="text-3xl mr-3">😢</span>
-											<h3 className="text-xl font-bold text-gray-800">Eliminated</h3>
-										</div>
-										<p className="text-gray-600 mb-4">
-											Who will be sent home this week?
-										</p>
-										<select
-											value={predictions.eliminated}
-											onChange={(e) => handlePredictionChange("eliminated", e.target.value)}
-											disabled={isLocked === true}
-											className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
-												}`}
-											required
-										>
-											<option value="">Select Eliminated Contestant</option>
-											{getAvailableParticipants().map((participant) => (
-												<option key={participant.id} value={participant.id}>
-													{participant.name}
-												</option>
-											))}
-										</select>
+							{/* Eliminated - hidden in Week 10 (Final) */}
+							{currentWeek < 10 && (
+								<div className="bg-gradient-to-r from-red-100 to-red-50 rounded-xl p-6 border border-red-200">
+									<div className="flex items-center mb-4">
+										<span className="text-3xl mr-3">😢</span>
+										<h3 className="text-xl font-bold text-gray-800">Eliminated</h3>
 									</div>
+									<p className="text-gray-600 mb-4">
+										Who will be sent home this week?
+									</p>
+									<select
+										value={predictions.eliminated}
+										onChange={(e) => handlePredictionChange("eliminated", e.target.value)}
+										disabled={isLocked === true}
+										className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all bg-white text-gray-800 ${isLocked === true ? 'opacity-50 cursor-not-allowed' : ''
+											}`}
+										required
+									>
+										<option value="">Select Eliminated Contestant</option>
+										{getAvailableParticipants().map((participant) => (
+											<option key={participant.id} value={participant.id}>
+												{participant.name}
+											</option>
+										))}
+									</select>
+								</div>
+							)}
 
 									{/* Handshake */}
 									<div className="bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-xl p-6 border border-yellow-200">
@@ -706,14 +708,14 @@ function PredictionsPageContent() {
 												</span>
 											</div>
 										)}
-										{predictions.eliminated && (
+							{currentWeek < 10 && predictions.eliminated && (
 											<div className="flex items-center space-x-3 p-3 bg-red-100 rounded-lg">
 												<span className="text-2xl">😢</span>
 												<span className="text-gray-700">
 													<strong>Eliminated:</strong> {participants.find(p => p.id === predictions.eliminated)?.name}
 												</span>
 											</div>
-										)}
+							)}
 										{predictions.handshake && (
 											<div className="flex items-center space-x-3 p-3 bg-yellow-100 rounded-lg">
 												<span className="text-2xl">🤝</span>
