@@ -1,0 +1,14 @@
+node_modules
+dist
+web
+e2e
+test-results
+playwright-report
+tmp
+*.db
+*.db-shm
+*.db-wal
+.git
+.env
+.env.*
+!.env.example

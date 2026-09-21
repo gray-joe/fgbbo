@@ -1,25 +1,23 @@
 {
-  "name": "nextjs",
-  "version": "0.1.0",
+  "name": "basic-node-api",
+  "version": "1.0.0",
   "private": true,
+  "description": "A TypeScript CRUD API backed by SQLite",
+  "main": "dist/src/server.js",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start"
+    "build": "tsc",
+    "start": "npm run build && node dist/src/server.js",
+    "seed": "npm run build && node dist/src/seed.js",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "test:e2e": "playwright test",
+    "typecheck:e2e": "tsc -p e2e"
   },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.55.0",
-    "@vercel/analytics": "^1.5.0",
-    "next": "15.5.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+  "engines": {
+    "node": ">=22.5"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.4.1",
+    "typescript": "^7.0.2"
   }
 }
